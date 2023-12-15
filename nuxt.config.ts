@@ -14,8 +14,8 @@ export default defineNuxtConfig({
             "DM+Sans": [400, 500, 600, 700]
         }
     },
-    fontMetrics: {
-        fonts: ["DM Sans"]
+    strapi: {
+        url: "http://localhost:5555"
     },
     runtimeConfig: {
         strapi: {
