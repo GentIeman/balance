@@ -93,6 +93,17 @@
           {{ contentByRouterType("up", ["Sign up", "Sign in"]) }}
         </UButton>
       </UForm>
+      <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
+      <p class="text-gray-600">
+        {{ contentByRouterType("up", ["Have you been here before?", "Not registered yet?"]) }}
+        <ULink
+          :to="{path: `sign-${route.params.type == 'up' ? 'in': 'up'}`}"
+          active-class="text-cyan-500 font-semibold"
+          inactive-class="text-cyan-500 font-semibold"
+        >
+          {{ contentByRouterType("up", ["Sign in", "Sign up"]) }}
+        </ULink>
+      </p>
     </UContainer>
   </div>
 </template>
