@@ -2,7 +2,7 @@
   <div class="flex justify-center items-center bg-gray-100 h-screen">
     <UContainer class="flex flex-col gap-5 lg:px-[100px] sm:px-[50px] py-[50px] w-[500px] m-0 bg-white rounded-[20px]">
       <h1 class="w-full text-2xl text-zinc-800 font-semibold">
-        {{ route.path == "/sign-up" ? "Hello" : "Welcome Back" }}
+        {{ route.params.type == "up" ? "Hello" : "Welcome Back" }}
       </h1>
       <UForm
         :state="client"
@@ -22,7 +22,7 @@
           />
         </UFormGroup>
         <UFormGroup
-          v-if="route.path != '/sign-in'"
+          v-if="route.params.type != 'in'"
           name="username"
           size="sm"
           label="Username"
@@ -35,7 +35,7 @@
           />
         </UFormGroup>
         <UFormGroup
-          v-if="route.path != '/sign-in'"
+          v-if="route.params.type != 'in'"
           name="salary"
           size="sm"
           label="Salary"
@@ -49,7 +49,7 @@
           />
         </UFormGroup>
         <UFormGroup
-          v-if="route.path != '/sign-in'"
+          v-if="route.params.type != 'in'"
           name="pensionYear"
           size="sm"
           label="Penstion date"
@@ -90,7 +90,7 @@
           type="submit"
           class="flex justify-center w-full"
         >
-          {{ route.path == "/sign-up" ? "Sign up" : "Sign in" }}
+          {{ route.params.type == "up" ? "Sign up" : "Sign in" }}
         </UButton>
       </UForm>
     </UContainer>
