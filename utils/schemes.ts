@@ -1,6 +1,6 @@
 import {object, string, number} from "yup"
 
-export const registrationSchema = object({
+export const formValidationSchema = object({
     email: string().email("You must enter an email").required("Required"),
     username: string().required("Required").min(4, "Must be at least 4 characters"),
     password: string().required("Required").min(8, "Must be at least 8 characters"),
