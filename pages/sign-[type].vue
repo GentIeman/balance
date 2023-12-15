@@ -88,8 +88,8 @@
           </UInput>
         </UFormGroup>
         <UButton
+          block
           type="submit"
-          class="flex justify-center w-full"
         >
           {{ contentByRouterType("up", ["Sign up", "Sign in"]) }}
         </UButton>
