@@ -5,8 +5,9 @@
         {{ contentByRouterType("up", ["Hello", "Welcome Back"]) }}
       </h1>
       <UForm
-        :state="client"
-        :schema="schema"
+        :state="user"
+        @submit="onAuth(contentByRouterType('up', ['register', 'login']), $event)"
+        :schema="formValidationSchema"
         class="flex flex-col gap-5 h-full"
       >
         <UFormGroup
@@ -16,7 +17,7 @@
           required
         >
           <UInput
-            v-model="client.email"
+            v-model="user.email"
             type="email"
             placeholder="you@example.com"
           />
@@ -29,7 +30,7 @@
           required
         >
           <UInput
-            v-model="client.username"
+            v-model="user.username"
             type="text"
             placeholder="username"
           />
@@ -42,9 +43,9 @@
           required
         >
           <UInput
-            v-model="client.salary"
+            v-model="user.salary"
             type="number"
-            @change="client.salary = $event.target.value == '' ? 1 : client.salary"
+            @change="user.salary = $event.target.value == '' ? 1 : user.salary"
             placeholder="1000"
           />
         </UFormGroup>
@@ -56,9 +57,9 @@
           hint="Optional"
         >
           <UInput
-            v-model="client.pensionYear"
+            v-model="user.pensionYear"
             type="number"
-            @change="client.pensionYear = $event.target.value == '' ? currentYear : client.pensionYear"
+            @change="user.pensionYear = $event.target.value == '' ? currentYear : user.pensionYear"
             :placeholder="`${currentYear}`"
           />
         </UFormGroup>
@@ -69,7 +70,7 @@
           required
         >
           <UInput
-            v-model="client.password"
+            v-model="user.password"
             :type="isShowPassword ? 'text' : 'password'"
             placeholder="****"
             autocomplete
@@ -108,13 +109,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import { type InferType } from "yup"
+import type { FormSubmitEvent } from "#ui/types"
 import {UForm, UContainer, UFormGroup, UInput, UButton, UDivider, ULink} from "#components"
-import type {IClient} from "~/utils/interfaces"
-import {registrationSchema as schema} from "~/utils/schemes"
+import type {IUser} from "~/utils/interfaces"
+import {formValidationSchema} from "~/utils/schemes"
 import {useRoute} from "vue-router"
 
 const route = useRoute()
-const client = reactive<IClient>({
+const { login, register} = useStrapiAuth()
+
+const user = reactive<IUser>({
   email: "",
   username: "",
   password: "",
