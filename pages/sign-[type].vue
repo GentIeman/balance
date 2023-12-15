@@ -2,7 +2,7 @@
   <div class="flex justify-center items-center bg-gray-100 h-screen">
     <UContainer class="flex flex-col gap-5 lg:px-[100px] sm:px-[50px] py-[50px] w-[500px] m-0 bg-white rounded-[20px]">
       <h1 class="w-full text-2xl text-zinc-800 font-semibold">
-        {{ route.params.type == "up" ? "Hello" : "Welcome Back" }}
+        {{ contentByRouterType("up", ["Hello", "Welcome Back"]) }}
       </h1>
       <UForm
         :state="client"
@@ -90,14 +90,14 @@
           type="submit"
           class="flex justify-center w-full"
         >
-          {{ route.params.type == "up" ? "Sign up" : "Sign in" }}
+          {{ contentByRouterType("up", ["Sign up", "Sign in"]) }}
         </UButton>
       </UForm>
     </UContainer>
   </div>
 </template>
 <script setup lang="ts">
-import {UForm, UContainer, UFormGroup, UInput, UButton} from "#components"
+import {UForm, UContainer, UFormGroup, UInput, UButton, UDivider, ULink} from "#components"
 import type {IClient} from "~/utils/interfaces"
 import {registrationSchema as schema} from "~/utils/schemes"
 import {useRoute} from "vue-router"
@@ -116,4 +116,6 @@ const isShowPassword = ref<boolean>(false)
 const currentYear: number = new Date().getFullYear()
 
 const togglePasswordIcon = computed(() => isShowPassword.value ? "i-heroicons-eye-20-solid" : "i-heroicons-eye-slash-20-solid")
+
+const contentByRouterType = (conditionParam: string, elements: string[]): string => route.params.type == conditionParam ? elements[0] : elements[1]
 </script>
