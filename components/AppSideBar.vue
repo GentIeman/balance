@@ -15,41 +15,21 @@
       Add expense
     </UButton>
     <div class="flex flex-col w-full gap-3">
-      <h2 class="text-zinc-800 text-lg font-bold font-['Open Sans'] leading-none">
+      <h2 class="text-zinc-800 text-lg font-bold] leading-none">
         Menu
       </h2>
       <ul class="flex-col justify-center items-start gap-2.5 inline-flex">
-        <li class="w-full">
+        <li
+          class="w-full"
+          v-for="(link, i) in links"
+          :key="i"
+        >
           <ULink
-            to="/"
-            active-class="text-cyan-500 text-base font-medium font-['DM Sans'] leading-snug"
-            inactive-class="text-slate-500 text-base font-medium font-['DM Sans'] leading-snug"
+            :to="{path: link.to}"
+            active-class="text-cyan-500 text-base font-medium leading-snug"
+            inactive-class="text-slate-500 text-base font-medium leading-snug"
           >
-            Dashboard
-          </ULink>
-        </li>
-        <li class="w-full">
-          <ULink
-            active-class="text-cyan-500 text-base font-medium font-['DM Sans'] leading-snug"
-            inactive-class="text-slate-500 text-base font-medium font-['DM Sans'] leading-snug"
-          >
-            Expenses
-          </ULink>
-        </li>
-        <li class="w-full">
-          <ULink
-            active-class="text-cyan-500 text-base font-medium font-['DM Sans'] leading-snug"
-            inactive-class="text-slate-500 text-base font-medium font-['DM Sans'] leading-snug"
-          >
-            Pension
-          </ULink>
-        </li>
-        <li class="w-full">
-          <ULink
-            active-class="text-cyan-500 text-base font-medium font-['DM Sans'] leading-snug"
-            inactive-class="text-slate-500 text-base font-medium font-['DM Sans'] leading-snug"
-          >
-            Savings
+            {{ link.title }}
           </ULink>
         </li>
       </ul>
@@ -81,6 +61,13 @@ const logout = (type?: string) => {
   authStore.auth(type)
   router.push("/sign-in")
 }
+
+const links = [
+  {to: '/', title: 'Dashboard'},
+  // {to: '/', title: 'Expenses'},
+  // {to: '/', title: 'Pension'},
+  // {to: '/', title: 'Savings'},
+]
 
 </script>
 
