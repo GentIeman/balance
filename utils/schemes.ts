@@ -5,5 +5,5 @@ export const formValidationSchema = object({
     username: string().required("Required").min(4, "Must be at least 4 characters"),
     password: string().required("Required").min(8, "Must be at least 8 characters"),
     salary: number().required("Required").moreThan(1, "We can't get 0 dollars"),
-    pensionYear: number().min(new Date().getFullYear(), "We can't go back in time").lessThan(new Date().getFullYear()+60, "Too far way")
+    pensionYear: number().transform((value) => Number.isNaN(value) ? new Date().getFullYear() : value ).nullable().min(new Date().getFullYear(), "We can't go back in time").lessThan(new Date().getFullYear()+60, "Too far way")
 })
