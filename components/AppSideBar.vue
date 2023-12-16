@@ -1,14 +1,13 @@
 <template>
   <UContainer class="flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[30px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
     <Logo />
-    <ul class="flex flex-col w-full h-max lg:px-[8px] sm:px-[8px] py-[4px]">
-      <li class="solid-zinc-800 text-[20px] font-semibold">
-        {{ user?.username }}
-      </li>
-      <li class="text-black text-opacity-50 text-sm font-normal">
-        {{ user?.email }}
-      </li>
-    </ul>
+    <UButton
+      variant="ghost"
+      class="flex flex-col items-start solid-zinc-800 text-[20px] font-semibold"
+    >
+      {{ user?.username }}
+      <span class="text-black text-opacity-50 text-sm font-normal">{{ user?.email }}</span>
+    </UButton>
     <UButton
       block
       class="w-full"
