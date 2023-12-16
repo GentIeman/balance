@@ -97,7 +97,7 @@
       <p class="text-gray-600">
         {{ contentByRouterType("up", ["Have you been here before?", "Not registered yet?"]) }}
         <ULink
-          :to="{path: `sign-${route.params.type == 'up' ? 'in': 'up'}`}"
+          :to="{path: `sign-${contentByRouterType('up', ['in', 'up'])}`}"
           active-class="text-cyan-500 font-semibold"
           inactive-class="text-cyan-500 font-semibold"
         >
