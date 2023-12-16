@@ -1,9 +1,11 @@
 <template>
-  <NuxtPage />
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
 <script setup lang="ts">
-import {NuxtPage} from "#components"
+import {NuxtPage, NuxtLayout} from "#components"
 </script>
 
 <style>
