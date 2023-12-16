@@ -4,95 +4,14 @@
       <h1 class="w-full text-2xl text-zinc-800 font-semibold">
         {{ contentByRouterType("up", ["Hello", "Welcome Back"]) }}
       </h1>
-      <UForm
+      <LoginForm
+        v-if="contentByRouterType('in', [true, false])"
         :state="user"
-        @submit="onAuth(contentByRouterType('up', ['register', 'login']), $event)"
-        :schema="formValidationSchema"
-        class="flex flex-col gap-5 h-full"
-      >
-        <UFormGroup
-          name="email"
-          size="sm"
-          label="Email"
-          required
-        >
-          <UInput
-            v-model="user.email"
-            type="email"
-            placeholder="you@example.com"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="route.params.type != 'in'"
-          name="username"
-          size="sm"
-          label="Username"
-          required
-        >
-          <UInput
-            v-model="user.username"
-            type="text"
-            placeholder="username"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="route.params.type != 'in'"
-          name="salary"
-          size="sm"
-          label="Salary"
-          required
-        >
-          <UInput
-            v-model="user.salary"
-            type="number"
-            @change="user.salary = $event.target.value == '' ? 1 : user.salary"
-            placeholder="1000"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="route.params.type != 'in'"
-          name="pensionYear"
-          size="sm"
-          label="Penstion date"
-          hint="Optional"
-        >
-          <UInput
-            v-model="user.pensionYear"
-            type="number"
-            :placeholder="`${currentYear}`"
-          />
-        </UFormGroup>
-        <UFormGroup
-          name="password"
-          size="sm"
-          label="Password"
-          required
-        >
-          <UInput
-            v-model="user.password"
-            :type="isShowPassword ? 'text' : 'password'"
-            placeholder="****"
-            autocomplete
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-          >
-            <template #trailing>
-              <UButton
-                color="gray"
-                variant="link"
-                :icon="togglePasswordIcon"
-                @click="isShowPassword = !isShowPassword"
-                :padded="false"
-              />
-            </template>
-          </UInput>
-        </UFormGroup>
-        <UButton
-          block
-          type="submit"
-        >
-          {{ contentByRouterType("up", ["Sign up", "Sign in"]) }}
-        </UButton>
-      </UForm>
+      />
+      <RegisterForm
+        v-else
+        :state="user"
+      />
       <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
       <p class="text-gray-600">
         {{ contentByRouterType("up", ["Have you been here before?", "Not registered yet?"]) }}
@@ -105,18 +24,31 @@
         </ULink>
       </p>
     </UContainer>
+    <UNotification
+      class="absolute top-[90px] bottom-auto max-w-[500px]"
+      color="rose"
+      @close="isShowErrorNotification = false"
+      v-if="isShowErrorNotification"
+      id="3"
+      :timeout="3000"
+      :description="serverErrorDescription"
+      title="Notification"
+    />
   </div>
 </template>
 <script setup lang="ts">
-import { type InferType } from "yup"
-import type { FormSubmitEvent } from "#ui/types"
-import {UForm, UContainer, UFormGroup, UInput, UButton, UDivider, ULink} from "#components"
+import {UDivider, ULink, UNotification, UContainer} from "#components"
 import type {IUser} from "~/utils/interfaces"
-import {formValidationSchema} from "~/utils/schemes"
 import {useRoute} from "vue-router"
-
+import LoginForm from "~/components/loginForm.vue"
+import RegisterForm from "~/components/registerForm.vue"
+import {useAuthStore} from "~/store/authStore"
+const authStore = useAuthStore()
 const route = useRoute()
-const { login, register} = useStrapiAuth()
+
+definePageMeta({
+  middleware: ["sign"]
+})
 
 const user = reactive<IUser>({
   email: "",
@@ -126,11 +58,14 @@ const user = reactive<IUser>({
   pensionYear: null
 })
 
-const isShowPassword = ref<boolean>(false)
+const serverErrorDescription = ref<string>()
+const isShowErrorNotification = ref<boolean>(false)
 
-const currentYear: number = new Date().getFullYear()
-
-const togglePasswordIcon = computed(() => isShowPassword.value ? "i-heroicons-eye-20-solid" : "i-heroicons-eye-slash-20-solid")
-
-const contentByRouterType = (conditionParam: string, elements: string[]): string => route.params.type == conditionParam ? elements[0] : elements[1]
+watch(authStore.$state, () => {
+  if (authStore.$state.errors !== null) {
+      serverErrorDescription.value = authStore.$state.errors.message
+      isShowErrorNotification.value = true
+  }
+})
+const contentByRouterType = (conditionParam: string, elements: any[]): string => route.params.type == conditionParam ? elements[0] : elements[1]
 </script>
