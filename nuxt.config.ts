@@ -3,7 +3,7 @@ import {defineNuxtConfig} from "nuxt/config"
 
 export default defineNuxtConfig({
     devtools: {enabled: false},
-    modules: ["@nuxtjs/strapi", "@nuxt/ui", "@nuxtjs/eslint-module", "@nuxtjs/color-mode", "@nuxtjs/google-fonts"],
+    modules: ["@nuxtjs/strapi", "@nuxt/ui", "@nuxtjs/eslint-module", "@nuxtjs/color-mode", "@nuxtjs/google-fonts", "@pinia/nuxt"],
     colorMode: {
         preference: "light",
     },
