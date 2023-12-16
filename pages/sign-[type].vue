@@ -59,7 +59,6 @@
           <UInput
             v-model="user.pensionYear"
             type="number"
-            @change="user.pensionYear = $event.target.value == '' ? currentYear : user.pensionYear"
             :placeholder="`${currentYear}`"
           />
         </UFormGroup>
@@ -124,7 +123,7 @@ const user = reactive<IUser>({
   username: "",
   password: "",
   salary: 10,
-  pensionYear: new Date().getFullYear()
+  pensionYear: null
 })
 
 const isShowPassword = ref<boolean>(false)
