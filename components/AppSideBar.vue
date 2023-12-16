@@ -57,7 +57,7 @@ const user: IUser = useStrapiUser()
 const authStore = useAuthStore()
 const router = useRouter()
 
-const logout = (type?: string) => {
+const logout = (type: string) => {
   authStore.auth(type)
   router.push("/sign-in")
 }
