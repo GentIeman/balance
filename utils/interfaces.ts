@@ -19,3 +19,8 @@ export interface IServerErrors {
 export interface IAuthFormProps {
     state: IUser
 }
+
+export interface IHeader {
+    title: string,
+    subtitle?: string
+}
