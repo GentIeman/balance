@@ -14,7 +14,10 @@
     >
       Add expense
     </UButton>
-    <div class="flex flex-col w-full gap-3">
+    <div
+      class="flex flex-col w-full gap-3"
+      v-if="balanceStore.categories.length > 0"
+    >
       <h2 class="text-zinc-800 text-lg font-bold] leading-none">
         Menu
       </h2>
