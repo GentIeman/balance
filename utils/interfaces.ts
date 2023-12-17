@@ -7,7 +7,8 @@ export interface IUser {
 }
 
 export interface IAuthState {
-    errors: IServerErrors | null
+    user: IUser | object
+    errors: IServerErrors | null,
 }
 
 export interface IServerErrors {
