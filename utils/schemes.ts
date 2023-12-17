@@ -12,3 +12,8 @@ export const loginFormValidation = object({
     email: string().email("You must enter an email").required("Required"),
     password: string().min(8, "Must be at least 8 characters"),
 })
+
+export const categoryFormValidation = object({
+    title: string().min(3, "Must be at least 3 characters"),
+    limit: number().transform((value) => Number.isNaN(value) ? null : value ).nullable().moreThan(9, "Not enough for the limit").max(9999999, "Can you do?")
+})
