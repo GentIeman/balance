@@ -60,7 +60,7 @@ definePageMeta({
   middleware: ["auth"]
 })
 
-onServerPrefetch(async () => {
+onBeforeMount(async () => {
   await balanceStore.fetchUserCategories(authStore.user.id)
 })
 </script>
