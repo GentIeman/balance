@@ -1,28 +1,65 @@
 <template>
   <AppHeader
-    :title="setHeaderMeta(headerMeta, 'title')"
-    :subtitle="setHeaderMeta(headerMeta, 'subtitle')"
+    title="Dashboard"
+    subtitle="See your quick overview data right here"
   />
+  <UContainer
+    class="flex justify-center w-full sm:p-0 lg:p-0 m-0"
+  >
+    <UCard class="flex flex-col w-full justify-center">
+      <template #header>
+        <h2 class="flex flex-col text-zinc-800 text-[30px] font-semibold">
+          Hello 👋
+          <span class="text-zinc-600 text-lg font-normal">You don't have any categories yet</span>
+        </h2>
+      </template>
+      <UButton
+        block
+        @click.passive="isOpen = true"
+      >
+        Create category
+      </UButton>
+    </Ucard>
+    <UModal
+      v-model="isOpen"
+    >
+      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+              Create category
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isOpen = false"
+            />
+          </div>
+        </template>
+        <CategoryForm />
+      </UCard>
+    </UModal>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
-const route = useRoute()
+import {UButton, UCard, UContainer, UModal} from "#components"
+import AppHeader from "~/components/AppHeader.vue"
+import CategoryForm from "~/components/forms/categoryForm.vue"
+import {useBalanceStore} from "~/store/balanceStore"
+import {useAuthStore} from "~/store/authStore"
+
+const balanceStore = useBalanceStore()
+const authStore = useAuthStore()
+const isOpen = ref<boolean>(false)
 
 definePageMeta({
   middleware: ["auth"]
 })
 
-const headerMeta = [
-  {title: "Dashboard", subtitle: "See your quick overview  data right here", page: "/"}
-]
-const setHeaderMeta = (meta: object, field: string): string => {
-  for (let item of meta) {
-    if (item.page == route.fullPath) return item[field]
-  }
-}
-
+onServerPrefetch(async () => {
+  await balanceStore.fetchUserCategories(authStore.user.id)
+})
 </script>
-
-<style scoped>
-
-</style>
