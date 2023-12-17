@@ -25,3 +25,11 @@ export interface IHeader {
     title: string,
     subtitle?: string
 }
+
+export interface ICategory {
+    id: number,
+    title: string,
+    limit: number,
+    dateCreation?: Date,
+    userId?: number
+}
