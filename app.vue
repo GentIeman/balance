@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout>
-    <NuxtPage class="sm:px-[30px] py-[20px]" />
+    <NuxtPage />
   </NuxtLayout>
 </template>
 
