@@ -41,7 +41,7 @@
       block
       color="primary"
       variant="outline"
-      @click="logout('logout')"
+      @click="signOut()"
       trailing
     >
       Log out
@@ -51,15 +51,17 @@
 
 <script setup lang="ts">
 import {UContainer, AppLogo as Logo, UButton, ULink} from "#components"
-import {type IUser} from "#imports"
 import {useAuthStore} from "~/store/authStore"
-const user: IUser = useStrapiUser()
+import {useBalanceStore} from "~/store/balanceStore"
 const authStore = useAuthStore()
+const user = authStore.user
 const router = useRouter()
 
-const logout = (type: string) => {
-  authStore.auth(type)
-  router.push("/sign-in")
+const balanceStore = useBalanceStore()
+
+const signOut = () => {
+  authStore.auth("logout", null)
+  router.push("/sign")
 }
 
 const links = [
