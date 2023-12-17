@@ -28,6 +28,10 @@ export const useAuthStore = defineStore("authStore", {
             } catch (err: any) {
                 this.errors = err.error
             }
+        },
+        cacheUser() {
+            const user = useStrapiUser()
+            if (user) this.user = user
         }
     },
 })

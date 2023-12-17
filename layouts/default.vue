@@ -7,6 +7,10 @@
 
 <script setup lang="ts">
 import AppSideBar from "~/components/AppSideBar.vue"
+import {useAuthStore} from "~/store/authStore"
+const authStore = useAuthStore()
+
+authStore.cacheUser()
 </script>
 
 <style scoped>
