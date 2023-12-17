@@ -5,6 +5,7 @@
   />
   <UContainer
     class="flex justify-center w-full sm:p-0 lg:p-0 m-0"
+    v-if="balanceStore.categories.length == 0"
   >
     <UCard class="flex flex-col w-full justify-center">
       <template #header>
