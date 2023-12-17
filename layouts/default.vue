@@ -1,7 +1,9 @@
 <template>
   <div class="grid grid-cols-[300px_1fr] h-screen bg-gray-100">
     <AppSideBar />
-    <slot />
+    <div class="grid auto-rows-max gap-10 sm:px-[30px] sm:py-[20px]">
+      <slot />
+    </div>
   </div>
 </template>
 
