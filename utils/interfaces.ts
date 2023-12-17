@@ -7,7 +7,8 @@ export interface IUser {
 }
 
 export interface IAuthState {
-    errors: IServerErrors | null
+    user: IUser | object
+    errors: IServerErrors | null,
 }
 
 export interface IServerErrors {
@@ -18,4 +19,17 @@ export interface IServerErrors {
 
 export interface IAuthFormProps {
     state: IUser
+}
+
+export interface IHeader {
+    title: string,
+    subtitle?: string
+}
+
+export interface ICategory {
+    id: number,
+    title: string,
+    limit: number,
+    dateCreation?: Date,
+    userId?: number
 }

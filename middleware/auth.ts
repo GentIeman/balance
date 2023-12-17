@@ -1,8 +1,7 @@
-export default defineNuxtRouteMiddleware((to, from) => {
-    const user = useStrapiUser()
-    if (!user.value) {
-        return navigateTo("sign-in")
-    } else {
-        return navigateTo("/")
-    }
+import {useAuthStore} from "~/store/authStore"
+
+export default defineNuxtRouteMiddleware(() => {
+    const authStore = useAuthStore()
+    const user = authStore.user
+    if (!user) return navigateTo("sign")
 })

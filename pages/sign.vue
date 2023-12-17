@@ -2,26 +2,26 @@
   <div class="flex justify-center items-center bg-gray-100 h-screen">
     <UContainer class="flex flex-col gap-5 lg:px-[100px] sm:px-[50px] py-[50px] w-[500px] m-0 bg-white rounded-[20px]">
       <h1 class="w-full text-2xl text-zinc-800 font-semibold">
-        {{ contentByRouterType("up", ["Hello", "Welcome Back"]) }}
+        {{ isLogin ? "Welcome back" : "Hello" }}
       </h1>
       <LoginForm
-        v-if="contentByRouterType('in', [true, false])"
+        v-if="isLogin"
         :state="user"
       />
       <RegisterForm
-        v-else
+        v-if="!isLogin"
         :state="user"
       />
       <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
       <p class="text-gray-600">
-        {{ contentByRouterType("up", ["Have you been here before?", "Not registered yet?"]) }}
-        <ULink
-          :to="{path: `sign-${contentByRouterType('up', ['in', 'up'])}`}"
-          active-class="text-cyan-500 font-semibold"
-          inactive-class="text-cyan-500 font-semibold"
+        {{ isLogin ? "Not registered yet?" : "Have you been here before?" }}
+        <UButton
+          @click="isLogin = !isLogin"
+          variant="link"
+          class="sm:px-0"
         >
-          {{ contentByRouterType("up", ["Sign in", "Sign up"]) }}
-        </ULink>
+          {{ isLogin ? "Sign up" : "Sign in" }}
+        </UButton>
       </p>
     </UContainer>
     <UNotification
@@ -37,17 +37,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import {UDivider, ULink, UNotification, UContainer} from "#components"
+import {UDivider, UButton, UNotification, UContainer} from "#components"
 import type {IUser} from "~/utils/interfaces"
-import {useRoute} from "vue-router"
-import LoginForm from "~/components/loginForm.vue"
-import RegisterForm from "~/components/registerForm.vue"
+import LoginForm from "~/components/forms/loginForm.vue"
+import RegisterForm from "~/components/forms/registerForm.vue"
 import {useAuthStore} from "~/store/authStore"
 const authStore = useAuthStore()
-const route = useRoute()
 
 definePageMeta({
-  middleware: ["sign"]
+  layout: "sign"
 })
 
 const user = reactive<IUser>({
@@ -58,6 +56,8 @@ const user = reactive<IUser>({
   pensionYear: null
 })
 
+const isLogin = ref<boolean>(true)
+
 const serverErrorDescription = ref<string>()
 const isShowErrorNotification = ref<boolean>(false)
 
@@ -67,5 +67,4 @@ watch(authStore.$state, () => {
       isShowErrorNotification.value = true
   }
 })
-const contentByRouterType = (conditionParam: string, elements: any[]): string => route.params.type == conditionParam ? elements[0] : elements[1]
 </script>
