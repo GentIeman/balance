@@ -27,9 +27,30 @@ export interface IHeader {
 }
 
 export interface ICategory {
-    id: number,
+    id: number | 0,
     title: string,
-    limit: number,
-    dateCreation?: Date,
-    userId?: number
+    budgetLimit: number,
+    expenses?: object[]
+}
+
+export interface ICategoryFormProps {
+    category: ICategory
+}
+
+export interface IDeleteCategory {
+    category: ICategory
+}
+
+export interface IExpense {
+    id: number | 0,
+    amount: number,
+    categoryId: number,
+}
+
+export interface IExpenseFormProps {
+    expense: IExpense
+}
+
+export interface IDeleteExpense {
+    expense: IExpense
 }
