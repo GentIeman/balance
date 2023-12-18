@@ -14,6 +14,11 @@ export const loginFormValidation = object({
 })
 
 export const categoryFormValidation = object({
-    title: string().min(3, "Must be at least 3 characters"),
-    limit: number().transform((value) => Number.isNaN(value) ? null : value ).nullable().moreThan(9, "Not enough for the limit").max(9999999, "Can you do?")
+    title: string().min(3, "Must be at least 3 characters").required("Required"),
+    budgetLimit: number().transform((value) => Number.isNaN(value) ? null : value ).nullable().moreThan(9, "Not enough for the limit").max(9999999, "Can you do?").required("Required")
+})
+
+export const expenseFormValidation = object({
+    category: string().required("Required"),
+    amount: number().transform((value) => Number.isNaN(value) ? null : value ).nullable().moreThan(1, "Upps...").max(99999999, "Do you have that much money ?").required("Required")
 })
