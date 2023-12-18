@@ -1,8 +1,9 @@
 <template>
   <UForm
     class="flex flex-col gap-5 h-full"
-    :state="category"
+    :state="localCategory"
     :schema="categoryFormValidation"
+    @submit="putCategory($event)"
   >
     <UFormGroup
       name="title"
@@ -11,29 +12,28 @@
       required
     >
       <UInput
-        v-model="category.title"
+        v-model="localCategory.title"
         type="text"
         placeholder="Dream category"
       />
     </UFormGroup>
     <UFormGroup
-      name="limit"
+      name="budgetLimit"
       size="sm"
       label="Limit"
       required
     >
       <UInput
-        v-model="category.limit"
+        v-model="localCategory.budgetLimit"
+        type="number"
         placeholder="1000"
-        autocomplete
       />
     </UFormGroup>
     <UButton
       block
-      @click="addCategory(category)"
-      type="button"
+      type="submit"
     >
-      Create
+      {{ localCategory.id ? "Edit" : "Create" }}
     </UButton>
   </UForm>
 </template>
@@ -41,21 +41,30 @@
 <script setup lang="ts">
 import {categoryFormValidation} from "~/utils/schemes"
 import {UButton, UForm, UFormGroup, UInput} from "#components"
-import type {ICategory} from "~/utils/interfaces"
+import type {ICategory, ICategoryFormProps} from "~/utils/interfaces"
 import {useBalanceStore} from "~/store/balanceStore"
-import {useAuthStore} from "~/store/authStore"
+import type {InferType} from "yup"
+import type {FormSubmitEvent} from "#ui/types"
 const balanceStore = useBalanceStore()
-const authStore = useAuthStore()
-const user = authStore.user
-const category = reactive<ICategory>({
+
+const categoryEmpty = reactive<ICategory>({
   id: 0,
   title: "",
-  limit: 0,
-  userId: user.id
+  budgetLimit: 0
 })
 
-const addCategory = (category: ICategory) => {
-  balanceStore.createOrUpdateCategory("create", category)
+const {category} = defineProps<ICategoryFormProps>()
+
+const localCategory = computed(() => {
+  return category ? category : categoryEmpty
+})
+
+const emit = defineEmits(["closeModal"])
+type categorySchema = InferType<typeof categoryFormValidation>
+const putCategory = (event: FormSubmitEvent<categorySchema>) => {
+  const operationType = category.id ? "update" : "create"
+  balanceStore.initCategory(event.data, operationType)
+  emit("closeModal")
 }
 </script>
 

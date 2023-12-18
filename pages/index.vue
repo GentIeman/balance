@@ -5,7 +5,7 @@
   />
   <UContainer
     class="flex justify-center w-full sm:p-0 lg:p-0 m-0"
-    v-if="balanceStore.categories.length == 0"
+    v-if="categories.length == 0"
   >
     <UCard class="flex flex-col w-full justify-center">
       <template #header>
@@ -16,7 +16,7 @@
       </template>
       <UButton
         block
-        @click.passive="isOpen = true"
+        @click="isOpen = true"
       >
         Create category
       </UButton>
@@ -39,7 +39,10 @@
             />
           </div>
         </template>
-        <CategoryForm />
+        <CategoryForm
+          @close-modal="isOpen = false"
+          :category="category"
+        />
       </UCard>
     </UModal>
   </UContainer>
@@ -50,17 +53,26 @@ import {UButton, UCard, UContainer, UModal} from "#components"
 import AppHeader from "~/components/AppHeader.vue"
 import CategoryForm from "~/components/forms/categoryForm.vue"
 import {useBalanceStore} from "~/store/balanceStore"
+import type {ICategory} from "~/utils/interfaces"
 import {useAuthStore} from "~/store/authStore"
 
 const balanceStore = useBalanceStore()
 const authStore = useAuthStore()
+const user = authStore.user
+const categories = computed(() => balanceStore.getCategories())
 const isOpen = ref<boolean>(false)
+
+const category = reactive<ICategory>({
+  id: 0,
+  title: "",
+  budgetLimit: 10,
+})
 
 definePageMeta({
   middleware: ["auth"]
 })
 
 onBeforeMount(async () => {
-  await balanceStore.fetchUserCategories(authStore.user.id)
+  if (categories.value.length == 0) await balanceStore.fetchUserCategories(user.id)
 })
 </script>

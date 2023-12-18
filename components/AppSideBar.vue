@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[30px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
+  <UContainer class="sticky inset-0 flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[20px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
     <Logo />
     <UButton
       variant="ghost"
@@ -11,14 +11,14 @@
     <UButton
       block
       class="w-full"
+      v-if="categories.length == 0"
     >
       Add expense
     </UButton>
     <div
       class="flex flex-col w-full gap-3"
-      v-if="balanceStore.categories.length > 0"
     >
-      <h2 class="text-zinc-800 text-lg font-bold] leading-none">
+      <h2 class="text-zinc-800 text-lg font-semibold leading-none">
         Menu
       </h2>
       <ul class="flex-col justify-center items-start gap-2.5 inline-flex">
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import {UContainer, AppLogo as Logo, UButton, ULink} from "#components"
+import {UContainer, AppLogo as Logo, UButton, ULink, USkeleton} from "#components"
 import {useAuthStore} from "~/store/authStore"
 import {useBalanceStore} from "~/store/balanceStore"
 const authStore = useAuthStore()
@@ -61,6 +61,7 @@ const user = authStore.user
 const router = useRouter()
 
 const balanceStore = useBalanceStore()
+const categories = computed(() => balanceStore.getCategories())
 
 const signOut = () => {
   authStore.auth("logout", null)
@@ -69,7 +70,7 @@ const signOut = () => {
 
 const links = [
   {to: '/', title: 'Dashboard'},
-  // {to: '/', title: 'Expenses'},
+  {to: '/expenses', title: 'Expenses'},
   // {to: '/', title: 'Pension'},
   // {to: '/', title: 'Savings'},
 ]

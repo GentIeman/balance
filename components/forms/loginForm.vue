@@ -34,6 +34,7 @@
           <UButton
             color="gray"
             variant="link"
+            size="sm"
             :icon="togglePasswordIcon"
             @click="isShowPassword = !isShowPassword"
             :padded="false"
