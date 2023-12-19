@@ -44,6 +44,8 @@ export interface IDeleteCategory {
 export interface IExpense {
     id: number | 0,
     amount: number,
+    createdAt?: string,
+    localeDate?: string,
     categoryId: number,
 }
 
