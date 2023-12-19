@@ -15,9 +15,24 @@ export const useBalanceStore = defineStore("balanceStore", {
         getReverseCategories: (state) => {
             return state.categories.reverse()
         },
-        getExpenses: (state) => (id?: number) => {
-            if (id) return state.expenses.some((expense: IExpense) => expense.id == id)
-            return state.expenses
+        getCategoriesExpenses: (state) => {
+            return state.categories.flatMap((category: ICategory) =>
+                category.expenses.map((expense) => ({
+                    ...expense,
+                    category: category.title,
+                    localeDate: new Date(expense.createdAt).toLocaleDateString()
+                }))
+            )
+        },
+        getTotalCategoryExpenses: (state) => (selectedCategory?: ICategory) => {
+            const categoriesToCalculate = selectedCategory ? [selectedCategory] : state.categories
+
+            const updatedCategories = categoriesToCalculate.map((category) => ({
+                ...category,
+                totalExpenses: category.expenses.reduce((acc, expense) => acc + expense.amount, 0),
+            }))
+
+            return selectedCategory ? updatedCategories[0].totalExpenses : updatedCategories
         },
     },
     actions: {
