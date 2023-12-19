@@ -21,8 +21,8 @@
     <AppTable
       @show-edit-form="showCategoryForm"
       @show-delete-form="showDeleteCategoryForm"
-      title="Categories"
-      :rows="categories"
+      :payload="categories"
+      :page-count="5"
       :columns="categoriesTableColumns"
     />
     <UModal
@@ -59,62 +59,84 @@
       />
     </UModal>
   </UCard>
-  <UCard>
-    <template #header>
-      <div class="flex justify-between">
-        <h2 class="text-zinc-800 text-base font-semibold leading-tight">
-          Expenses
-        </h2>
-        <UButton
-          icon="i-heroicons-plus"
-          size="sm"
-          @click="showExpenseForm({})"
-        >
-          Add expense
-        </UButton>
-      </div>
-    </template>
-    <AppTable
-      @show-edit-form="showExpenseForm"
-      @show-delete-form="showDeleteExpenseForm"
-      title="Expenses"
-      :rows="expenses"
-      :columns="expensesTableColumns"
-    />
-    <UModal
-      prevent-close
-      v-model="isShowExpenseForm"
-    >
-      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              {{ expense.id ? "Edit" : "Create" }} expense
-            </h3>
-            <UButton
-              color="gray"
-              variant="ghost"
-              icon="i-heroicons-x-mark-20-solid"
-              class="-my-1"
-              @click="isShowExpenseForm = false"
-            />
-          </div>
-        </template>
-        <expenseForm
-          :expense="expense"
-          @close-modal="isShowExpenseForm = false"
-        />
-      </UCard>
-    </UModal>
-    <UModal
-      prevent-close
-      v-model="isShowDeleteExpenseForm"
-    >
-      <DeleteExpense
-        @close-modal="isShowDeleteExpenseForm = false"
-        :expense="expense"
+  <div class="grid grid-flow-col gap-10">
+    <UCard>
+      <template #header>
+        <div class="flex justify-between">
+          <h2 class="text-zinc-800 text-base font-semibold leading-tight">
+            Expenses
+          </h2>
+          <UButton
+            icon="i-heroicons-plus"
+            size="sm"
+            @click="showExpenseForm({})"
+          >
+            Add expense
+          </UButton>
+        </div>
+      </template>
+      <AppTable
+        @show-edit-form="showExpenseForm"
+        @show-delete-form="showDeleteExpenseForm"
+        :payload="expenses"
+        :page-count="3"
+        :columns="expensesTableColumns"
       />
-    </UModal>
+      <UModal
+        prevent-close
+        v-model="isShowExpenseForm"
+      >
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                {{ expense.id ? "Edit" : "Create" }} expense
+              </h3>
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="isShowExpenseForm = false"
+              />
+            </div>
+          </template>
+          <expenseForm
+            :expense="expense"
+            @close-modal="isShowExpenseForm = false"
+          />
+        </UCard>
+      </UModal>
+      <UModal
+        prevent-close
+        v-model="isShowDeleteExpenseForm"
+      >
+        <DeleteExpense
+          @close-modal="isShowDeleteExpenseForm = false"
+          :expense="expense"
+        />
+      </UModal>
+    </UCard>
+    <UCard
+      :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+    >
+      <template #header>
+        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+          Categories-wise Overview
+        </h3>
+      </template>
+      <Pie
+        class="m-auto"
+        :data="categoriesChartData"
+        :options="chartOptions"
+      />
+    </UCard>
+  </div>
+  <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+    <Bar
+      :data="expensesChartData"
+      :options="chartOptions"
+    />
   </UCard>
 </template>
 
@@ -129,12 +151,16 @@ import CategoryForm from "~/components/forms/categoryForm.vue"
 import DeleteCategory from "~/components/forms/deleteCategory.vue"
 import expenseForm from "~/components/forms/expenseForm.vue"
 import DeleteExpense from "~/components/forms/deleteExpense.vue"
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
+ChartJS.register(ArcElement, Tooltip, Legend)
+import {Bar, Pie} from 'vue-chartjs'
+import {generateDaysBar, generatePieChart} from "~/utils/chartUtils"
 
 const balanceStore = useBalanceStore()
 const authStore = useAuthStore()
 const user = authStore.user
-const categories = computed(() => balanceStore.getCategories())
-const expenses = computed(() => balanceStore.getExpenses())
+const categories = computed(() => balanceStore.getReverseCategories)
+const expenses = computed(() => balanceStore.getCategoriesExpenses)
 
 const category = ref<object>({})
 const expense = ref<object>({})
@@ -163,6 +189,31 @@ const showDeleteExpenseForm = (item: object) => {
   expense.value = item
   isShowDeleteExpenseForm.value = true
 }
+
+const expensesChartConfig = {
+  structure: {
+    date: "createdAt",
+    content: "amount"
+  },
+  days: 7,
+  chartLabel: "Expenses for 7 days",
+  backgroundColor: "cyan"
+}
+
+const categoriesChartConfig = {
+  label: "title",
+  dataKey: "totalExpenses",
+  colorKey: "color"
+}
+
+const totalExpenses =  computed(() => balanceStore.getTotalCategoryExpenses())
+const expensesChartData = computed(() => generateDaysBar(expenses.value, expensesChartConfig))
+const categoriesChartData = computed(() => generatePieChart(totalExpenses.value, categoriesChartConfig))
+
+const chartOptions = ref({
+  responsive: true,
+  maintainAspectRatio: true,
+})
 
 onBeforeMount(async () => {
   if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
