@@ -31,7 +31,7 @@ export const expensesTableColumns = [
         sortable: true
     },
     {
-        key: "createdAt",
+        key: "localeDate",
         label: "Date",
         sortable: true
     },

@@ -5,7 +5,6 @@
         <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
           Delete category
         </h3>
-        {{ category }}
         <UButton
           color="gray"
           variant="ghost"
