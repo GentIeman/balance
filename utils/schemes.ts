@@ -19,6 +19,6 @@ export const categoryFormValidation = object({
 })
 
 export const expenseFormValidation = object({
-    category: string().required("Required"),
+    category: string(),
     amount: number().transform((value) => Number.isNaN(value) ? null : value ).nullable().moreThan(1, "Upps...").max(99999999, "Do you have that much money ?").required("Required")
 })

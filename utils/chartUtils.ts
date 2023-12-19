@@ -29,7 +29,6 @@ export const generateDaysBar = (payload: object[], config: IBarChartConfig): ICh
 }
 
 export const generatePieChart = (payload: object[], config: IPieChartConfig): IChart => {
-    console.log(config)
     const labels = payload.map(item => item[config.label])
     const backgroundColor = payload.map(item => item[config.colorKey])
     const data = payload.map(item => item[config.dataKey])
