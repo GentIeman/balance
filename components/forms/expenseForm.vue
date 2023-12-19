@@ -2,7 +2,7 @@
   <UForm
     class="flex flex-col gap-5 h-full"
     :state="localExpense"
-    :scheme="expenseFormValidation"
+    :schema="expenseFormValidation"
     @submit="initExpense($event)"
   >
     <UFormGroup
@@ -16,6 +16,7 @@
         v-model="localExpense.categoryId"
         option-attribute="title"
         value-attribute="id"
+        required
       />
     </UFormGroup>
     <UFormGroup
