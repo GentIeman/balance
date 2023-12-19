@@ -10,7 +10,7 @@ export const categoriesTableColumns = [
         sortable: true
     },
     {
-        key: "createdAt",
+        key: "localeDate",
         label: "Date creation",
         sortable: true
     },
