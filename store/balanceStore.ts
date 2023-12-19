@@ -1,6 +1,7 @@
 import {defineStore} from "pinia"
 import type {ICategory, IExpense} from "~/utils/interfaces"
 import {useAuthStore} from "~/store/authStore"
+import {getRandomColor} from "~/utils/tools"
 
 export const useBalanceStore = defineStore("balanceStore", {
     state: () => ({
@@ -11,6 +12,9 @@ export const useBalanceStore = defineStore("balanceStore", {
         getCategories: (state) => (id?: number) => {
             if (id) return state.categories.some((category: ICategory) => category.id == id)
             return state.categories
+        },
+        getReverseCategories: (state) => {
+            return state.categories.reverse()
         },
         getExpenses: (state) => (id?: number) => {
             if (id) return state.expenses.some((expense: IExpense) => expense.id == id)
