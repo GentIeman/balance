@@ -1,7 +1,7 @@
-import {useAuthStore} from "~/store/authStore"
-
-export default defineNuxtRouteMiddleware(() => {
-    const authStore = useAuthStore()
-    const user = authStore.user
-    if (!user) return navigateTo("sign")
+export default defineNuxtRouteMiddleware((to) => {
+    const user = useStrapiUser()
+    if (!user.value) {
+        useCookie("redirect", { path: "/" }).value = to.fullPath
+        return navigateTo("/sign")
+    }
 })

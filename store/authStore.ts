@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import type {IAuthState} from "~/utils/interfaces"
+import {useBalanceStore} from "~/store/balanceStore"
 
 export const useAuthStore = defineStore("authStore", {
     state: (): IAuthState => ({
@@ -21,7 +22,9 @@ export const useAuthStore = defineStore("authStore", {
                         this.user = useStrapiUser()
                         break
                     case "logout":
+                        const balanceStore = useBalanceStore()
                         logout()
+                        balanceStore.clearCache()
                         this.user = {}
                         break
                 }
