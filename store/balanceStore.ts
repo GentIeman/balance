@@ -92,5 +92,9 @@ export const useBalanceStore = defineStore("balanceStore", {
             await _delete("expenses", expense.id)
             await this.fetchUserCategories(user.id)
         },
+        clearCache() {
+            this.expenses = []
+            this.categories = []
+        }
     },
 })
