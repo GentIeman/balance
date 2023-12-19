@@ -1,6 +1,6 @@
 <template>
   <UTable
-    :rows="slicedRows"
+    :rows="rows"
     :columns="columns"
   >
     <template
@@ -14,38 +14,25 @@
         />
       </UDropdown>
     </template>
-    <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-      <UPagination
-        v-model="page"
-        :page-count="pageCount"
-        :total="slicedRows.length"
-      />
-    </div>
   </UTable>
+  <div
+    class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
+  >
+    <UPagination
+      v-model="page"
+      :page-count="props.pageCount"
+      :total="props.payload.length"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
 import {UPagination, UTable, UButton, UDropdown} from "#components"
+import {type ITableProps} from "~/utils/interfaces"
 
-const slicedRows = computed(() => {
-  return props.rows.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount)
-})
-
-const page = ref(1)
-
-const props = defineProps({
-  rows: {
-    type: Array,
-    required: true
-  },
-  pageCount: {
-    required: false,
-    default: 5
-  },
-  columns: {
-    required: true
-  },
-})
+const rows = computed(() => props.payload.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
+const page = ref<number>(1)
+const props = defineProps<ITableProps>()
 
 const emit = defineEmits(["showEditForm", "showDeleteForm"])
 
