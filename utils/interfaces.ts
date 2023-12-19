@@ -56,3 +56,34 @@ export interface IExpenseFormProps {
 export interface IDeleteExpense {
     expense: IExpense
 }
+
+export interface ITableProps {
+    payload: object[],
+    pageCount: number,
+    columns: object[]
+}
+
+export interface IChart {
+    labels: string[];
+    datasets: {
+        label?: string;
+        backgroundColor: string;
+        data: number[];
+    }[];
+}
+
+export interface IBarChartConfig {
+    structure: {
+        date: string,
+        content: string
+    },
+    days: number,
+    chartLabel?: string,
+    backgroundColor?: string
+}
+
+export interface IPieChartConfig {
+    label: string,
+    dataKey: string,
+    colorKey: string
+}
