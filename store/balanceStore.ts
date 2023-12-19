@@ -6,7 +6,6 @@ import {getRandomColor} from "~/utils/tools"
 export const useBalanceStore = defineStore("balanceStore", {
     state: () => ({
         categories: [],
-        expenses: []
     }),
     getters: {
         getCategories: (state) => (id?: number) => {
@@ -24,29 +23,20 @@ export const useBalanceStore = defineStore("balanceStore", {
     actions: {
         async fetchUserCategories(userId: number) {
             this.categories = []
-            this.expenses = []
             const {findOne} = useStrapi()
 
             const response = await findOne("users", userId, {
                 populate: {
                     categories: {
-                        populate: ["expenses"]
+                        populate: "*"
                     },
                 }
             })
-
             for (const category of response.categories) {
-                category.createdAt = new Date(category.createdAt).toLocaleDateString("en-GB")
-                this.expenses.push(...this.getCategoryExpenses(category))
+                category.localeDate = new Date(category.createdAt).toLocaleDateString()
+                category.color = getRandomColor()
                 this.categories.push(category)
             }
-        },
-        getCategoryExpenses(category: ICategory) {
-            return (category.expenses || []).map(expense => ({
-                ...expense,
-                category: category.title,
-                createdAt: new Date(expense.createdAt).toLocaleDateString("en-GB")
-            }))
         },
         async initCategory(category: ICategory, type: string) {
             const {create, update} = useStrapi()
@@ -93,7 +83,6 @@ export const useBalanceStore = defineStore("balanceStore", {
             await this.fetchUserCategories(user.id)
         },
         clearCache() {
-            this.expenses = []
             this.categories = []
         }
     },
