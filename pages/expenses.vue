@@ -26,6 +26,7 @@
       :columns="categoriesTableColumns"
     />
     <UModal
+      prevent-close
       v-model="isShowCategoryForm"
     >
       <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
