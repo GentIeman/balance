@@ -110,7 +110,7 @@ const authStore = useAuthStore()
 const user = authStore.user
 
 const goal = ref<object>({})
-const savings = computed(() => balanceStore.savings)
+const savings = computed(() => balanceStore.getReverseSavings)
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
 
