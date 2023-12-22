@@ -101,7 +101,7 @@ const links = [
   {to: '/', title: 'Dashboard'},
   {to: '/expenses', title: 'Expenses'},
   // {to: '/', title: 'Pension'},
-  // {to: '/', title: 'Savings'},
+  {to: '/savings', title: 'Savings'},
 ]
 
 </script>
