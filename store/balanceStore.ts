@@ -35,9 +35,7 @@ export const useBalanceStore = defineStore("balanceStore", {
 
             return selectedCategory ? updatedCategories[0].totalExpenses : updatedCategories
         },
-        getReverseSavings: (state) => {
-            return state.savings.reverse()
-        },
+        getSortedSavingsByPercent: (state) => state.savings.sort((a, b) => Math.abs(a.currentAmount - b.totalAmount) - Math.abs(b.currentAmount - a.totalAmount)),
     },
     actions: {
         async fetchUserCategories(userId: number) {
