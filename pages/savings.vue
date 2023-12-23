@@ -126,7 +126,7 @@ import GoalForm from "~/components/forms/goalForm.vue"
 import {calcProgress} from "~/utils/tools"
 import DeleteGoal from "~/components/forms/deleteGoal.vue"
 import targetChart from "~/components/charts/lineChart.vue"
-import {generateTargetChart} from "~/utils/chartUtils"
+import {generateLineChart} from "~/utils/chartUtils"
 import type {IGoal} from "~/utils/interfaces"
 const balanceStore = useBalanceStore()
 const authStore = useAuthStore()
@@ -139,7 +139,7 @@ const savings = computed(() => balanceStore.getSortedSavingsByPercent.slice((pag
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
 
-const targetChartData = computed(() => generateTargetChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5))
+const targetChartData = computed(() => generateLineChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5))
 
 const showGoalForm = (item: object) => {
   goal.value = item
