@@ -61,7 +61,13 @@ export const useBalanceStore = defineStore("balanceStore", {
             this.savings = []
             const {findOne} = useStrapi()
 
-            const response = await findOne("users", userId, { populate: "savings" })
+            const response = await findOne("users", userId, {
+                populate: {
+                    savings: {
+                        populate: "*"
+                    },
+                }
+            })
             for (const saving of response.savings) {
                 saving.endDate = new Date(saving.endDate).toLocaleDateString()
                 this.savings.push(saving)
@@ -124,6 +130,7 @@ export const useBalanceStore = defineStore("balanceStore", {
                         endDate: new Date(payload.endDate).toISOString().slice(0, 10),
                         user: user.id
                     })
+                    await this.updateSavingsHistories(payload)
                     await this.fetchUserSavings(user.id)
                     break
                 case "update":
@@ -133,6 +140,7 @@ export const useBalanceStore = defineStore("balanceStore", {
                         currentAmount: payload.currentAmount,
                         endDate: new Date(payload.endDate).toISOString().slice(0, 10),
                     })
+                    await this.updateSavingsHistories(payload)
                     await this.fetchUserSavings(user.id)
                     break
             }
@@ -144,8 +152,16 @@ export const useBalanceStore = defineStore("balanceStore", {
             await _delete("savings", goal.id)
             await this.fetchUserSavings(user.id)
         },
+        async updateSavingsHistories(saving: IGoal) {
+            const {create} = useStrapi()
+            await create("saving-histories", {
+                transactionAmount: saving.currentAmount,
+                saving: saving.id
+            })
+        },
         clearCache() {
             this.categories = []
+            this.savings = []
         }
     },
 })
