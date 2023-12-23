@@ -87,3 +87,21 @@ export interface IPieChartConfig {
     dataKey: string,
     colorKey: string
 }
+
+export interface IGoal {
+    id: number | 0,
+    title: string,
+    totalAmount: number,
+    currentAmount?: number,
+    endDate: string,
+    history?: object[]
+}
+
+export interface IGoalFormProps {
+    goal: IGoal,
+    userSalary?: number
+}
+
+export interface IDeleteGoal {
+    goal: ICategory
+}

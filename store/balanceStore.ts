@@ -1,11 +1,12 @@
 import {defineStore} from "pinia"
-import type {ICategory, IExpense} from "~/utils/interfaces"
+import type {ICategory, IExpense, IGoal} from "~/utils/interfaces"
 import {useAuthStore} from "~/store/authStore"
 import {getRandomColor} from "~/utils/tools"
 
 export const useBalanceStore = defineStore("balanceStore", {
     state: () => ({
         categories: [],
+        savings: [],
     }),
     getters: {
         getCategories: (state) => (id?: number) => {
@@ -34,6 +35,7 @@ export const useBalanceStore = defineStore("balanceStore", {
 
             return selectedCategory ? updatedCategories[0].totalExpenses : updatedCategories
         },
+        getSortedSavingsByPercent: (state) => state.savings.sort((a, b) => Math.abs(a.currentAmount - b.totalAmount) - Math.abs(b.currentAmount - a.totalAmount)),
     },
     actions: {
         async fetchUserCategories(userId: number) {
@@ -51,6 +53,22 @@ export const useBalanceStore = defineStore("balanceStore", {
                 category.localeDate = new Date(category.createdAt).toLocaleDateString()
                 category.color = getRandomColor()
                 this.categories.push(category)
+            }
+        },
+        async fetchUserSavings(userId: number) {
+            this.savings = []
+            const {findOne} = useStrapi()
+
+            const response = await findOne("users", userId, {
+                populate: {
+                    savings: {
+                        populate: "*"
+                    },
+                }
+            })
+            for (const saving of response.savings) {
+                saving.endDate = new Date(saving.endDate).toLocaleDateString()
+                this.savings.push(saving)
             }
         },
         async initCategory(category: ICategory, type: string) {
@@ -97,8 +115,51 @@ export const useBalanceStore = defineStore("balanceStore", {
             await _delete("expenses", expense.id)
             await this.fetchUserCategories(user.id)
         },
+        async initGoal(payload: IGoal, type: string) {
+            const {create, update} = useStrapi()
+            const authStore = useAuthStore()
+            const user = authStore.user
+            switch (type) {
+                case "create":
+                    await create("savings", {
+                        title: payload.title,
+                        totalAmount: payload.totalAmount,
+                        currentAmount: payload.currentAmount,
+                        endDate: new Date(payload.endDate).toISOString().slice(0, 10),
+                        user: user.id
+                    })
+                    await this.updateSavingsHistories(payload)
+                    await this.fetchUserSavings(user.id)
+                    break
+                case "update":
+                    await update("savings", payload.id, {
+                        title: payload.title,
+                        totalAmount: payload.totalAmount,
+                        currentAmount: payload.currentAmount,
+                        endDate: new Date(payload.endDate).toISOString().slice(0, 10),
+                    })
+                    await this.updateSavingsHistories(payload)
+                    await this.fetchUserSavings(user.id)
+                    break
+            }
+        },
+        async deleteGoal(goal: IGoal) {
+            const authStore = useAuthStore()
+            const user = authStore.user
+            const { delete: _delete } = useStrapi()
+            await _delete("savings", goal.id)
+            await this.fetchUserSavings(user.id)
+        },
+        async updateSavingsHistories(saving: IGoal) {
+            const {create} = useStrapi()
+            await create("saving-histories", {
+                transactionAmount: saving.currentAmount,
+                saving: saving.id
+            })
+        },
         clearCache() {
             this.categories = []
+            this.savings = []
         }
     },
 })

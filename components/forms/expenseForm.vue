@@ -3,7 +3,7 @@
     class="flex flex-col gap-5 h-full"
     :state="localExpense"
     :schema="expenseFormValidation"
-    @submit="initExpense($event)"
+    @submit="putExpense($event)"
   >
     <UFormGroup
       name="category"
@@ -65,7 +65,7 @@ const localExpense = computed(() => {
 const emits = defineEmits(["closeModal"])
 const categories = computed(() => balanceStore.getCategories())
 type expenseSchema = InferType<typeof expenseFormValidation>
-const initExpense = (event: FormSubmitEvent<expenseSchema>) => {
+const putExpense = (event: FormSubmitEvent<expenseSchema>) => {
   const operationType = expense.id ? "update" : "create"
   balanceStore.initExpense(event.data, operationType)
   emits("closeModal")

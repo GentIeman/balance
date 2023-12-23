@@ -22,6 +22,7 @@
       </UButton>
     </Ucard>
     <UModal
+      prevent-close
       v-model="isOpen"
     >
       <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">

@@ -19,7 +19,7 @@
     <div
       class="flex flex-col w-full gap-3"
     >
-      <h2 class="text-zinc-800 text-lg font-semibold leading-none">
+      <h2 class="sm:p-1 text-zinc-800 text-lg font-semibold leading-none">
         Menu
       </h2>
       <ul class="flex-col justify-center items-start gap-2.5 inline-flex">
@@ -30,6 +30,7 @@
         >
           <ULink
             :to="{path: link.to}"
+            class="block sm:p-1 hover:bg-primary-50 rounded-md"
             active-class="text-cyan-500 text-base font-medium leading-snug"
             inactive-class="text-slate-500 text-base font-medium leading-snug"
           >
@@ -101,7 +102,7 @@ const links = [
   {to: '/', title: 'Dashboard'},
   {to: '/expenses', title: 'Expenses'},
   // {to: '/', title: 'Pension'},
-  // {to: '/', title: 'Savings'},
+  {to: '/savings', title: 'Savings'},
 ]
 
 </script>
