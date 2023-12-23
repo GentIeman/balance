@@ -75,7 +75,7 @@
     <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+          <h3 class="text-base font-semibold leading-6 text-gray-900">
             {{ goal.id ? "Edit" : "Create" }} goal
           </h3>
           <UButton
@@ -103,6 +103,18 @@
       :goal="goal"
     />
   </UModal>
+  <UCard>
+    <template #header>
+      <h3 class="text-lg font-semibold leading-6 text-gray-900">
+        Moving towards the {{ savings.length > 1 ? "targets" : "target" }}
+      </h3>
+    </template>
+    <targetChart
+      :datasets="targetChartData.datasets"
+      :labels="targetChartData.labels"
+      :options="chartOptions"
+    />
+  </UCard>
 </template>
 
 <script setup lang="ts">
@@ -113,6 +125,9 @@ import {useAuthStore} from "~/store/authStore"
 import GoalForm from "~/components/forms/goalForm.vue"
 import {calcProgress} from "~/utils/tools"
 import DeleteGoal from "~/components/forms/deleteGoal.vue"
+import targetChart from "~/components/charts/lineChart.vue"
+import {generateTargetChart} from "~/utils/chartUtils"
+import type {IGoal} from "~/utils/interfaces"
 const balanceStore = useBalanceStore()
 const authStore = useAuthStore()
 const user = authStore.user
@@ -123,6 +138,8 @@ const pageCount = ref(6)
 const savings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
+
+const targetChartData = computed(() => generateTargetChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5))
 
 const showGoalForm = (item: object) => {
   goal.value = item
@@ -144,7 +161,6 @@ const closeDeleteGoalForm = () => {
   isShowDeleteGoalForm.value = false
 }
 
-
 const actions = (item: object) => [
   [{
     label: 'Edit',
@@ -157,6 +173,29 @@ const actions = (item: object) => [
       click: () => showDeleteGoalForm(item)
     }]
 ]
+
+const chartOptions = computed(() => {
+  return {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      annotation: {
+        annotations: targetChartData.value.annotations
+      },
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          mode: 'y',
+        },
+        limits: {
+          y: {min: 0, max: Math.max(...savings.value.map((item: IGoal) => item.totalAmount))},
+        },
+      }
+    }
+  }
+})
 
 onBeforeMount(async () => {
   if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
