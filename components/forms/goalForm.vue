@@ -37,7 +37,7 @@
     >
       <UInput
         v-model="localGoal.currentAmount"
-        type="text"
+        type="number"
         placeholder="1000"
       />
     </UFormGroup>
@@ -62,15 +62,17 @@
     >
       {{ localGoal.id ? "Edit" : "Create" }}
     </UButton>
-    <UDivider>
-      <UIcon
-        name="i-heroicons-information-circle-20-solid"
-        class="text-2xl text-gray-600"
-      />
-    </UDivider>
-    <p class="text-gray-400">
-      {{ checkSavingsPossibility(userSalary, localGoal.totalAmount) }}
-    </p>
+    <div v-if="localGoal.totalAmount > 0">
+      <UDivider>
+        <UIcon
+          name="i-heroicons-information-circle-20-solid"
+          class="text-2xl text-gray-600"
+        />
+      </UDivider>
+      <p class="text-gray-400">
+        {{ checkSavingsPossibility(userSalary, localGoal.totalAmount) }}
+      </p>
+    </div>
   </UForm>
 </template>
 
@@ -90,7 +92,7 @@ const minDate = computed(() => new Date().toISOString().slice(0, 10))
 const maxDate = computed(() => new Date(new Date().setFullYear(new Date().getFullYear() + 4)).toISOString().slice(0, 10))
 
 // sad...
-const localGoal = JSON.parse(JSON.stringify(goal))
+const localGoal = ref(JSON.parse(JSON.stringify(goal)))
 
 const emit = defineEmits(["closeModal"])
 type goalSchema = InferType<typeof goalFormValidation>
