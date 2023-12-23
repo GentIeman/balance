@@ -15,51 +15,59 @@
       Add goal
     </UButton>
   </UContainer>
-  <UCard
-    class="max-w-[300px]"
-    v-for="saving in savings"
-    :key="saving.id"
-  >
-    <template #header>
-      <header class="flex items-center justify-between">
-        <p class="text-zinc-800 text-lg font-semibold leading-tight">
-          {{ saving.title }}
-          <UIcon
-            v-if="saving.currentAmount >= saving.totalAmount"
-            name="i-heroicons-check-badge-solid"
-            class="text-green-600 text-lg"
-          />
+  <div class="responsive-grid">
+    <UCard
+      class="w-full"
+      v-for="saving in savings"
+      :key="saving.id"
+    >
+      <template #header>
+        <header class="flex items-center justify-between">
+          <p class="text-zinc-800 text-lg font-semibold leading-tight">
+            {{ saving.title }}
+            <UIcon
+              v-if="saving.currentAmount >= saving.totalAmount"
+              name="i-heroicons-check-badge-solid"
+              class="text-green-600 text-lg"
+            />
+          </p>
+          <UDropdown
+            :items="actions(saving)"
+            :popper="{placement: 'bottom-end'}"
+          >
+            <UButton
+              color="gray"
+              variant="solid"
+              icon="i-heroicons-ellipsis-horizontal-20-solid"
+            />
+          </UDropdown>
+        </header>
+      </template>
+      <div class="flex flex-col items-end gap-2">
+        <UProgress
+          indicator
+          :value="calcProgress(saving.currentAmount, saving.totalAmount)"
+        />
+        <p class="text-black text-opacity-80 text-xs font-normal">
+          {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
         </p>
-        <UDropdown
-          :items="actions(saving)"
-          :popper="{placement: 'bottom-end'}"
-        >
-          <UButton
-            color="gray"
-            variant="solid"
-            icon="i-heroicons-ellipsis-horizontal-20-solid"
-          />
-        </UDropdown>
-      </header>
-    </template>
-    <div class="flex flex-col items-end gap-2">
-      <UProgress
-        indicator
-        :value="calcProgress(saving.currentAmount, saving.totalAmount)"
-      />
-      <p class="text-black text-opacity-80 text-xs font-normal">
-        {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
-      </p>
-    </div>
-    <ul class="flex flex-col gap-2">
-      <li class="text-gray-800 text-lg font-semibold">
-        Details
-      </li>
-      <li class="text-black text-sm font-normal">
-        End date: <time>{{ new Date(saving.endDate).toLocaleDateString() }}</time>
-      </li>
-    </ul>
-  </UCard>
+      </div>
+      <ul class="flex flex-col gap-2">
+        <li class="text-gray-800 text-lg font-semibold">
+          Details
+        </li>
+        <li class="text-black text-sm font-normal">
+          End date: <time>{{ new Date(saving.endDate).toLocaleDateString() }}</time>
+        </li>
+      </ul>
+    </UCard>
+  </div>
+  <UPagination
+    class="justify-end"
+    v-model="page"
+    :page-count="pageCount"
+    :total="savings.length"
+  />
   <UModal
     prevent-close
     v-model="isShowGoalForm"
@@ -98,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import {UContainer, UButton, UCard, UDropdown, UProgress, UModal, UIcon} from "#components"
+import {UContainer, UButton, UCard, UDropdown, UProgress, UModal, UIcon, UPagination} from "#components"
 import AppHeader from "~/components/AppHeader.vue"
 import {useBalanceStore} from "~/store/balanceStore"
 import {useAuthStore} from "~/store/authStore"
@@ -110,7 +118,9 @@ const authStore = useAuthStore()
 const user = authStore.user
 
 const goal = ref<object>({})
-const savings = computed(() => balanceStore.getReverseSavings)
+const page = ref(1)
+const pageCount = ref(6)
+const savings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
 
@@ -154,5 +164,9 @@ onBeforeMount(async () => {
 </script>
 
 <style scoped>
-
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
 </style>
