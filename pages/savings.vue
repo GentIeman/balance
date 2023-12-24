@@ -109,10 +109,9 @@
         Moving towards the {{ savings.length > 1 ? "targets" : "target" }}
       </h3>
     </template>
-    <targetChart
-      :datasets="targetChartData.datasets"
-      :labels="targetChartData.labels"
-      :options="chartOptions"
+    <Line
+      :data="targetChartData"
+      :options="targetChartOptions"
     />
   </UCard>
 </template>
@@ -127,6 +126,7 @@ import {calcProgress} from "~/utils/tools"
 import DeleteGoal from "~/components/forms/deleteGoal.vue"
 import {generateLineChart} from "~/utils/chartUtils"
 import type {IGoal} from "~/utils/interfaces"
+import {Line} from "vue-chartjs"
 const balanceStore = useBalanceStore()
 const authStore = useAuthStore()
 const user = authStore.user
@@ -171,28 +171,31 @@ const actions = (item: object) => [
     }]
 ]
 
-const chartOptions = computed(() => {
-  return {
-    responsive: true,
-    maintainAspectRatio: true,
-    plugins: {
-      annotation: {
-        annotations: targetChartData.value.annotations
-      },
-      zoom: {
-        zoom: {
-          wheel: {
-            enabled: true,
-          },
-          mode: 'y',
-        },
-        limits: {
-          y: {min: 0, max: Math.max(...savings.value.map((item: IGoal) => item.totalAmount))},
-        },
-      }
-    }
-  }
+const targetChartData = computed(() => {
+  const chartData = generateLineChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5)
+  return {datasets: chartData.datasets, labels: chartData.labels, annotations: chartData.annotations}
 })
+const targetChartOptions = computed(() => ({
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        annotation: {
+          annotations: targetChartData.value.annotations
+        },
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            mode: 'y',
+          },
+          limits: {
+            y: {min: 0, max: Math.max(...savings.value.map((item: IGoal) => item.totalAmount))},
+          },
+        }
+      }
+    })
+)
 
 onBeforeMount(async () => {
   if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
