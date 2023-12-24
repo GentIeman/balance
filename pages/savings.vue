@@ -125,7 +125,6 @@ import {useAuthStore} from "~/store/authStore"
 import GoalForm from "~/components/forms/goalForm.vue"
 import {calcProgress} from "~/utils/tools"
 import DeleteGoal from "~/components/forms/deleteGoal.vue"
-import targetChart from "~/components/charts/lineChart.vue"
 import {generateLineChart} from "~/utils/chartUtils"
 import type {IGoal} from "~/utils/interfaces"
 const balanceStore = useBalanceStore()
@@ -138,8 +137,6 @@ const pageCount = ref(6)
 const savings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
-
-const targetChartData = computed(() => generateLineChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5))
 
 const showGoalForm = (item: object) => {
   goal.value = item

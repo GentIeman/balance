@@ -20,8 +20,8 @@
   >
     <UPagination
       v-model="page"
-      :page-count="props.pageCount"
-      :total="props.payload.length"
+      :page-count="pageCount"
+      :total="payload.length"
     />
   </div>
 </template>
@@ -30,9 +30,9 @@
 import {UPagination, UTable, UButton, UDropdown} from "#components"
 import {type ITableProps} from "~/utils/interfaces"
 
-const rows = computed(() => props.payload.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
 const page = ref<number>(1)
-const props = defineProps<ITableProps>()
+const {payload, pageCount} = defineProps<ITableProps>()
+const rows = computed(() => payload.slice((page.value - 1) * pageCount, (page.value) * pageCount))
 
 const emit = defineEmits(["showEditForm", "showDeleteForm"])
 
