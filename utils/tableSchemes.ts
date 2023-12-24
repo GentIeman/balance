@@ -39,3 +39,21 @@ export const expensesTableColumns = [
         key: "actions"
     }
 ]
+
+export const categoriesStatusTableColumns = [
+    {
+        key: "title",
+        label: "Title",
+        sortable: true
+    },
+    {
+        key: "budgetLimit",
+        label: "Budget limit",
+        sortable: true
+    },
+    {
+        key: "status",
+        label: "Status",
+        sortable: true,
+    }
+]
