@@ -29,6 +29,35 @@ export const generateDaysBar = (payload: object[], config: IBarChartConfig): ICh
     }
 }
 
+export const generateMonthBar = (payload: object[], config: IBarChartConfig): IChart => {
+    const monthly: { [key: string]: number } = {}
+
+    payload.forEach(item => {
+        const date = new Date(item[config.structure.date])
+        const monthYear = `${date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}`
+        monthly[monthYear] = (monthly[monthYear] || 0) + item[config.structure.content]
+    })
+
+    const lastMonths = Array.from({ length: config.months }, (_, i) => {
+        const currentDate = new Date()
+        currentDate.setMonth(currentDate.getMonth() - i)
+        return currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+    }).reverse()
+
+    const data = lastMonths.map(month => monthly[month] || 0)
+
+    return {
+        labels: lastMonths,
+        datasets: [
+            {
+                label: config.chartLabel,
+                backgroundColor: config.backgroundColor,
+                data: data
+            },
+        ],
+    }
+}
+
 export const generatePieChart = (payload: object[], config: IPieChartConfig): IChart => {
     const labels = payload.map(item => item[config.label])
     const backgroundColor = payload.map(item => item[config.colorKey])
