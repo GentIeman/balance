@@ -152,8 +152,6 @@ import CategoryForm from "~/components/forms/categoryForm.vue"
 import DeleteCategory from "~/components/forms/deleteCategory.vue"
 import expenseForm from "~/components/forms/expenseForm.vue"
 import DeleteExpense from "~/components/forms/deleteExpense.vue"
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
-ChartJS.register(ArcElement, Tooltip, Legend)
 import {Bar, Pie} from 'vue-chartjs'
 import {generateDaysBar, generatePieChart} from "~/utils/chartUtils"
 
@@ -207,7 +205,7 @@ const categoriesChartConfig = {
   colorKey: "color"
 }
 
-const totalExpenses =  computed(() => balanceStore.getTotalCategoryExpenses())
+const totalExpenses = computed(() => balanceStore.getTotalCategoryExpenses())
 const expensesChartData = computed(() => generateDaysBar(expenses.value, expensesChartConfig))
 const categoriesChartData = computed(() => generatePieChart(totalExpenses.value, categoriesChartConfig))
 

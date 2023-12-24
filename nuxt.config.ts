@@ -10,5 +10,5 @@ export default defineNuxtConfig({
     strapi: {
         url: "http://localhost:5555"
     },
-    plugins: ["~/plugins/chart.ts"]
+    plugins: ["~/plugins/chart.client.ts"]
 })

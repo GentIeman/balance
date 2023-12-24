@@ -7,6 +7,7 @@ export const useBalanceStore = defineStore("balanceStore", {
     state: () => ({
         categories: [],
         savings: [],
+        expenses: [],
     }),
     getters: {
         getCategories: (state) => (id?: number) => {
@@ -17,13 +18,7 @@ export const useBalanceStore = defineStore("balanceStore", {
             return state.categories.reverse()
         },
         getCategoriesExpenses: (state) => {
-            return state.categories.flatMap((category: ICategory) =>
-                category.expenses.map((expense) => ({
-                    ...expense,
-                    category: category.title,
-                    localeDate: new Date(expense.createdAt).toLocaleDateString()
-                }))
-            )
+            return state.expenses
         },
         getTotalCategoryExpenses: (state) => (selectedCategory?: ICategory) => {
             const categoriesToCalculate = selectedCategory ? [selectedCategory] : state.categories
@@ -53,7 +48,15 @@ export const useBalanceStore = defineStore("balanceStore", {
                 category.localeDate = new Date(category.createdAt).toLocaleDateString()
                 category.color = getRandomColor()
                 this.categories.push(category)
+                this.expenses.push(...this.parseCategoriesExpenses(category))
             }
+        },
+        parseCategoriesExpenses: (category: ICategory) => {
+            return category.expenses.map((expense) => ({
+                ...expense,
+                category: category.title,
+                localeDate: new Date(expense.createdAt).toLocaleDateString()
+            }))
         },
         async fetchUserSavings(userId: number) {
             this.savings = []
