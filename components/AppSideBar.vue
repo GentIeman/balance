@@ -37,6 +37,19 @@
             {{ link.title }}
           </ULink>
         </li>
+        <li
+          v-if="user.pensionYear != null"
+          class="w-full"
+        >
+          <ULink
+            to="/pension"
+            class="block sm:p-1 hover:bg-primary-50 rounded-md"
+            active-class="text-cyan-500 text-base font-medium leading-snug"
+            inactive-class="text-slate-500 text-base font-medium leading-snug"
+          >
+            Pension
+          </ULink>
+        </li>
       </ul>
     </div>
     <div class="h-full" />
@@ -80,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import {UContainer, AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
+import {AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
 import {useAuthStore} from "~/store/authStore"
 import {useBalanceStore} from "~/store/balanceStore"
 import expenseForm from "~/components/forms/expenseForm.vue"
@@ -101,7 +114,6 @@ const signOut = () => {
 const links = [
   {to: '/', title: 'Dashboard'},
   {to: '/expenses', title: 'Expenses'},
-  // {to: '/', title: 'Pension'},
   {to: '/savings', title: 'Savings'},
 ]
 
