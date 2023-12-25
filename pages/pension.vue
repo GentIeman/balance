@@ -55,6 +55,21 @@
       </UContainer>
     </UCard>
   </div>
+  <UCard v-if="getCategories().length > 0">
+    <template #header>
+      <header>
+        <h2 class="flex flex-col gap-3 text-black-400 text-lg font-semibold">
+          Retirement savings over time
+        </h2>
+      </header>
+    </template>
+    <UContainer class="h-[250px] max-h-[400px]">
+      <Line
+        :data="chartData"
+        :options="options"
+      />
+    </UContainer>
+  </UCard>
 </template>
 
 <script setup lang="ts">
@@ -65,6 +80,8 @@ import {useAuthStore} from "~/store/authStore"
 import {calcProgress} from "~/utils/tools"
 import {useBalanceStore} from "~/store/balanceStore"
 import {storeToRefs} from "pinia"
+import {Line} from "vue-chartjs"
+import {expectedExpensesColumns, totalExpensesColumns} from "~/utils/tableSchemes"
 
 const authStore = useAuthStore()
 const user = authStore.user
@@ -112,6 +129,45 @@ const reduceExpenses = (categories: string[]) => {
   })
 
   return result
+}
+
+const generatePensionChartData = (endYear: number, currentYearAmount: number, finalPensionBudget: number, indexationRate: number, label: string, backgroundColor: string) => {
+  const currentYear: number = new Date().getFullYear()
+  const pensionYear: number = new Date(endYear).getFullYear()
+  const labels: string[] = []
+  const data: string[] = []
+
+  let pensionAmount: number = currentYearAmount
+
+  for (let year = currentYear; year <= pensionYear; year++) {
+    pensionAmount = pensionAmount * (1 + indexationRate / 100)
+
+    const interpolationFactor = (year - currentYear) / (pensionYear - currentYear)
+    const interpolatedValue = currentYearAmount + interpolationFactor * (finalPensionBudget - currentYearAmount)
+
+    pensionAmount = Math.min(interpolatedValue, finalPensionBudget)
+
+    labels.push(year.toString())
+    data.push(pensionAmount.toFixed(2))
+  }
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: label,
+        backgroundColor: backgroundColor,
+        data,
+      },
+    ],
+  }
+}
+
+const chartData = computed(() => generatePensionChartData(user.pensionYear, pensionData.value.annualSavings,pensionData.value.pensionBudget, 4.8, "Pension Prediction", "cyan"))
+
+const options = {
+  responsive: true,
+  maintainAspectRatio: false
 }
 
 onBeforeMount(async () => {
