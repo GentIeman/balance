@@ -217,4 +217,13 @@ const chartOptions = ref({
 onBeforeMount(async () => {
   if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
 })
+
+definePageMeta({
+  middleware: ["auth"]
+})
+
+useSeoMeta({
+  title: "Expenses",
+  description: "It is worth recording your expenses so as not to spend in the future"
+})
 </script>

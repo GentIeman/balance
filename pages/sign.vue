@@ -67,4 +67,8 @@ watch(authStore.$state, () => {
       isShowErrorNotification.value = true
   }
 })
+
+useSeoMeta({
+  title: () =>  `Sign ${isLogin.value == true ? "in" : "up"}`
+})
 </script>

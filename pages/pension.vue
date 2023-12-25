@@ -173,6 +173,15 @@ const options = {
 onBeforeMount(async () => {
   if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
 })
+
+definePageMeta({
+  middleware: ["auth"]
+})
+
+useSeoMeta({
+  title: "Pension (beta)",
+  description: "It is worth thinking about pension today"
+})
 </script>
 
 <style scoped>

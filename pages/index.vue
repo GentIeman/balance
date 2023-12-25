@@ -200,6 +200,11 @@ definePageMeta({
   middleware: ["auth"]
 })
 
+useSeoMeta({
+  title: "Dashboard",
+  description: "See your quick overview data right here"
+})
+
 onBeforeMount(async () => {
   if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
   if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
