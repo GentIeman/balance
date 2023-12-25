@@ -221,4 +221,9 @@ onBeforeMount(async () => {
 definePageMeta({
   middleware: ["auth"]
 })
+
+useSeoMeta({
+  title: "Expenses",
+  description: "It is worth recording your expenses so as not to spend in the future"
+})
 </script>

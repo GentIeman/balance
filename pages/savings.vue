@@ -205,6 +205,11 @@ onBeforeMount(async () => {
 definePageMeta({
   middleware: ["auth"]
 })
+
+useSeoMeta({
+  title: "Savings",
+  description: "Set goals for the future"
+})
 </script>
 
 <style scoped>

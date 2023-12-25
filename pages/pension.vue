@@ -177,6 +177,11 @@ onBeforeMount(async () => {
 definePageMeta({
   middleware: ["auth"]
 })
+
+useSeoMeta({
+  title: "Pension (beta)",
+  description: "It is worth thinking about pension today"
+})
 </script>
 
 <style scoped>
