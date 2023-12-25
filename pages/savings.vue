@@ -201,6 +201,10 @@ const targetChartOptions = computed(() => ({
 onBeforeMount(async () => {
   if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
 })
+
+definePageMeta({
+  middleware: ["auth"]
+})
 </script>
 
 <style scoped>

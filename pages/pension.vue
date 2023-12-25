@@ -173,6 +173,10 @@ const options = {
 onBeforeMount(async () => {
   if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
 })
+
+definePageMeta({
+  middleware: ["auth"]
+})
 </script>
 
 <style scoped>
