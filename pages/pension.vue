@@ -31,7 +31,7 @@
             Expenses for the current year
           </h3>
           <AppTable
-            :columns="[{key: 'category', label: 'Category', sortable: true},{key: 'expenses', label: 'Total Expenses', sortable: true}]"
+            :columns="totalExpensesColumns"
             :page-count="3"
             :payload="predictYearlyExpensesByCategories(getCategories())"
           />
@@ -48,7 +48,7 @@
       </template>
       <UContainer class="grid gap-5">
         <AppTable
-          :columns="[{key: 'category', label: 'Category', sortable: true}, {key: 'currentExpenses', label: 'Current expenses', sortable: true}, {key: 'expectedExpenses', label: 'Expected expenses', sortable: true}]"
+          :columns="expectedExpensesColumns"
           :page-count="3"
           :payload="reduceExpenses(getCategories())"
         />
