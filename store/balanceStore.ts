@@ -20,6 +20,9 @@ export const useBalanceStore = defineStore("balanceStore", {
         getCategoriesExpenses: (state) => {
             return state.expenses
         },
+        getSavings: (state) => {
+            return state.savings
+        },
         getTotalCategoryExpenses: (state) => (selectedCategory?: ICategory) => {
             const categoriesToCalculate = selectedCategory ? [selectedCategory] : state.categories
 
@@ -30,7 +33,13 @@ export const useBalanceStore = defineStore("balanceStore", {
 
             return selectedCategory ? updatedCategories[0].totalExpenses : updatedCategories
         },
-        getSortedSavingsByPercent: (state) => state.savings.sort((a, b) => Math.abs(b.currentAmount - a.totalAmount) - Math.abs(a.currentAmount - b.totalAmount)),
+        getSortedSavingsByPercent: (state) => {
+            const sortedSavings = [...state.savings]
+
+            return sortedSavings.sort(
+                (a, b) => Math.abs(b.currentAmount - a.totalAmount) - Math.abs(a.currentAmount - b.totalAmount)
+            )
+        }
     },
     actions: {
         async fetchUserCategories(userId: number) {
