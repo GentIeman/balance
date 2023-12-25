@@ -57,3 +57,32 @@ export const categoriesStatusTableColumns = [
         sortable: true,
     }
 ]
+
+export const totalExpensesColumns = [
+    {
+        key: "category",
+        label: "Category",
+        sortable: true
+    },
+    {
+        key: "expenses",
+        label: "Total Expenses",
+        sortable: true
+    }
+]
+
+export const expectedExpensesColumns = [
+    {
+        key: "category",
+        label: "Category",
+        sortable: true
+    },
+    {
+        key: "currentExpenses",
+        label: "Current expenses",
+        sortable: true
+    },
+    {
+        key: "expectedExpenses", label: "Expected expenses", sortable: true
+    }
+]
