@@ -18,7 +18,7 @@
   <div class="responsive-grid">
     <UCard
       class="w-full"
-      v-for="saving in savings"
+      v-for="saving in sortedSavings"
       :key="saving.id"
     >
       <template #header>
@@ -66,7 +66,7 @@
     class="justify-end"
     v-model="page"
     :page-count="pageCount"
-    :total="savings.length"
+    :total="sortedSavings.length"
   />
   <UModal
     prevent-close
@@ -134,7 +134,8 @@ const user = authStore.user
 const goal = ref<object>({})
 const page = ref(1)
 const pageCount = ref(6)
-const savings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
+const sortedSavings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
+const savings = computed(() => balanceStore.getSavings)
 const isShowGoalForm = ref<boolean>(false)
 const isShowDeleteGoalForm = ref<boolean>(false)
 

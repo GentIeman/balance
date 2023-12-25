@@ -75,7 +75,7 @@ export const generatePieChart = (payload: object[], config: IPieChartConfig): IC
 
 export const generateLineChart = (data: object[], label: string, pointsKey: string, pointKey: string, pointStyle: string, pointRadius: number) => {
     const datasets: object[] = []
-    let labelsSet = new Set()
+    let labelsSet: object[] = []
     const annotations: object = {}
 
     data.forEach((item, i) => {
@@ -94,20 +94,22 @@ export const generateLineChart = (data: object[], label: string, pointsKey: stri
             pointStyle: pointStyle,
             pointRadius: pointRadius,
         })
-        const monthLabel = new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
-        labelsSet = new Set([...labelsSet, ...Object.keys(aggregatedPoints)])
-        labelsSet.add(monthLabel)
 
+        const monthLabel = new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+        labelsSet = new Set([...labelsSet, ...Object.keys(aggregatedPoints), monthLabel])
+    })
+
+    const labels = Array.from(labelsSet).sort((a, b) => new Date(a) - new Date(b))
+
+    data.forEach((item, i) => {
+        const monthLabel = new Date(item.endDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
         annotations[`point${i + 1}`] = {
             type: "point",
-            xValue: Array.from(labelsSet).indexOf(monthLabel),
+            xValue: labels.indexOf(monthLabel),
             yValue: item.totalAmount,
             backgroundColor: datasets[i].backgroundColor,
         }
     })
-
-    const labels = Array.from(labelsSet)
-    labels.sort((a, b) => new Date(a) - new Date(b))
 
     return { datasets, annotations, labels }
 }

@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="sticky inset-0 flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[20px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
+  <aside class="sticky inset-0 flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[20px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
     <Logo />
     <UButton
       variant="ghost"
@@ -37,6 +37,19 @@
             {{ link.title }}
           </ULink>
         </li>
+        <li
+          v-if="user.pensionYear != null"
+          class="w-full"
+        >
+          <ULink
+            to="/pension"
+            class="block sm:p-1 hover:bg-primary-50 rounded-md"
+            active-class="text-cyan-500 text-base font-medium leading-snug"
+            inactive-class="text-slate-500 text-base font-medium leading-snug"
+          >
+            Pension
+          </ULink>
+        </li>
       </ul>
     </div>
     <div class="h-full" />
@@ -51,36 +64,36 @@
     >
       Log out
     </UButton>
-  </UContainer>
-  <UModal
-    prevent-close
-    v-model="isShowExpenseForm"
-  >
-    <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-            Create expense
-          </h3>
-          <UButton
-            color="gray"
-            variant="ghost"
-            icon="i-heroicons-x-mark-20-solid"
-            class="-my-1"
-            @click="isShowExpenseForm = false"
-          />
-        </div>
-      </template>
-      <expenseForm
-        :expense="{}"
-        @close-modal="isShowExpenseForm = false"
-      />
-    </UCard>
-  </UModal>
+    <UModal
+      prevent-close
+      v-model="isShowExpenseForm"
+    >
+      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+              Create expense
+            </h3>
+            <UButton
+              color="gray"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="isShowExpenseForm = false"
+            />
+          </div>
+        </template>
+        <expenseForm
+          :expense="{}"
+          @close-modal="isShowExpenseForm = false"
+        />
+      </UCard>
+    </UModal>
+  </aside>
 </template>
 
 <script setup lang="ts">
-import {UContainer, AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
+import {AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
 import {useAuthStore} from "~/store/authStore"
 import {useBalanceStore} from "~/store/balanceStore"
 import expenseForm from "~/components/forms/expenseForm.vue"
@@ -101,7 +114,6 @@ const signOut = () => {
 const links = [
   {to: '/', title: 'Dashboard'},
   {to: '/expenses', title: 'Expenses'},
-  // {to: '/', title: 'Pension'},
   {to: '/savings', title: 'Savings'},
 ]
 
