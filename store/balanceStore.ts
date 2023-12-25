@@ -172,6 +172,7 @@ export const useBalanceStore = defineStore("balanceStore", {
         clearCache() {
             this.categories = []
             this.savings = []
+            this.expenses = []
         }
     },
 })
