@@ -57,7 +57,7 @@
       </p>
     </UContainer>
     <div class="grid grid-cols-3 gap-10">
-      <UCard class="col-span-2">
+      <UCard :class="{'col-span-2': expenses.length > 0, 'col-span-full': expenses.length == 0}">
         <template #header>
           <div class="flex justify-between">
             <h2 class="text-zinc-800 text-base font-semibold leading-tight">
@@ -72,6 +72,7 @@
         />
       </UCard>
       <UCard
+        v-if="expenses.length > 0"
         class="col-span-1"
         :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >
@@ -90,6 +91,7 @@
     </div>
     <div class="grid grid-cols-3 auto-rows-max gap-10">
       <UCard
+        v-if="topThreeSavings.length > 0"
         class="col-span-1 max-h-[450px]"
       >
         <template #header>
@@ -119,6 +121,7 @@
         </ul>
       </UCard>
       <UCard
+        v-if="expenses.length > 0"
         class="grid col-span-2 max-h-[450px] bg-white"
         :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >

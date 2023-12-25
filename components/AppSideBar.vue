@@ -23,18 +23,39 @@
         Menu
       </h2>
       <ul class="flex-col justify-center items-start gap-2.5 inline-flex">
-        <li
-          class="w-full"
-          v-for="(link, i) in links"
-          :key="i"
-        >
+        <li class="w-full">
           <ULink
-            :to="{path: link.to}"
+            to="/"
             class="block sm:p-1 hover:bg-primary-50 rounded-md"
             active-class="text-cyan-500 text-base font-medium leading-snug"
             inactive-class="text-slate-500 text-base font-medium leading-snug"
           >
-            {{ link.title }}
+            Dashboard
+          </ULink>
+        </li><li
+          v-if="categories.length > 0"
+          class="w-full"
+        >
+          <ULink
+            to="/expenses"
+            class="block sm:p-1 hover:bg-primary-50 rounded-md"
+            active-class="text-cyan-500 text-base font-medium leading-snug"
+            inactive-class="text-slate-500 text-base font-medium leading-snug"
+          >
+            Expenses
+          </ULink>
+        </li>
+        <li
+          v-if="categories.length > 0"
+          class="w-full"
+        >
+          <ULink
+            to="/savings"
+            class="block sm:p-1 hover:bg-primary-50 rounded-md"
+            active-class="text-cyan-500 text-base font-medium leading-snug"
+            inactive-class="text-slate-500 text-base font-medium leading-snug"
+          >
+            Savings
           </ULink>
         </li>
         <li
@@ -110,13 +131,6 @@ const signOut = () => {
   authStore.auth("logout", null)
   router.push("/sign")
 }
-
-const links = [
-  {to: '/', title: 'Dashboard'},
-  {to: '/expenses', title: 'Expenses'},
-  {to: '/savings', title: 'Savings'},
-]
-
 </script>
 
 <style scoped>

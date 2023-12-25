@@ -15,7 +15,10 @@
       Add goal
     </UButton>
   </UContainer>
-  <div class="responsive-grid">
+  <div
+    class="responsive-grid"
+    v-if="savings.length > 0"
+  >
     <UCard
       class="w-full"
       v-for="saving in sortedSavings"
@@ -61,13 +64,13 @@
         </li>
       </ul>
     </UCard>
+    <UPagination
+      class="justify-end"
+      v-model="page"
+      :page-count="pageCount"
+      :total="sortedSavings.length"
+    />
   </div>
-  <UPagination
-    class="justify-end"
-    v-model="page"
-    :page-count="pageCount"
-    :total="sortedSavings.length"
-  />
   <UModal
     prevent-close
     v-model="isShowGoalForm"
@@ -103,7 +106,7 @@
       :goal="goal"
     />
   </UModal>
-  <UCard>
+  <UCard v-if="savings.length > 0">
     <template #header>
       <h3 class="text-lg font-semibold leading-6 text-gray-900">
         Moving towards the {{ savings.length > 1 ? "targets" : "target" }}

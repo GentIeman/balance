@@ -119,6 +119,7 @@
       </UModal>
     </UCard>
     <UCard
+      v-if="expenses.length > 0"
       :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
     >
       <template #header>
@@ -133,7 +134,10 @@
       />
     </UCard>
   </div>
-  <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+  <UCard
+    v-if="expenses.length > 0"
+    :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+  >
     <Bar
       :data="expensesChartData"
       :options="chartOptions"
