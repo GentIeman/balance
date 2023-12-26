@@ -4,7 +4,6 @@
     subtitle="It is worth thinking about pension today"
   />
   <div
-    v-if="getCategories().length > 0"
     class="grid grid-flow-col auto-cols-fr gap-5"
   >
     <UCard>
@@ -26,7 +25,10 @@
             {{ pensionData.annualSavings }} in year / {{ pensionData.pensionBudget }}
           </p>
         </div>
-        <div class="flex flex-col gap-3">
+        <div
+          class="flex flex-col gap-3"
+          v-if="getCategories().length > 0"
+        >
           <h3 class="text-black-400 text-lg font-semibold">
             Expenses for the current year
           </h3>
@@ -38,7 +40,7 @@
         </div>
       </UContainer>
     </UCard>
-    <UCard>
+    <UCard v-if="getCategories().length > 0">
       <template #header>
         <header>
           <h2 class="flex flex-col gap-3 text-black-400 text-lg font-semibold">
@@ -55,7 +57,7 @@
       </UContainer>
     </UCard>
   </div>
-  <UCard v-if="getCategories().length > 0">
+  <UCard>
     <template #header>
       <header>
         <h2 class="flex flex-col gap-3 text-black-400 text-lg font-semibold">

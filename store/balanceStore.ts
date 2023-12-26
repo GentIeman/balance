@@ -2,6 +2,7 @@ import {defineStore} from "pinia"
 import type {ICategory, IExpense, IGoal} from "~/utils/interfaces"
 import {useAuthStore} from "~/store/authStore"
 import {getRandomColor} from "~/utils/tools"
+import {calcProgress} from "~/utils/tools"
 
 export const useBalanceStore = defineStore("balanceStore", {
     state: () => ({
@@ -36,14 +37,13 @@ export const useBalanceStore = defineStore("balanceStore", {
         getSortedSavingsByPercent: (state) => {
             const sortedSavings = [...state.savings]
 
-            return sortedSavings.sort(
-                (a, b) => Math.abs(b.currentAmount - a.totalAmount) - Math.abs(a.currentAmount - b.totalAmount)
-            )
+            return sortedSavings.sort((a, b) => calcProgress(b.currentAmount, b.totalAmount) - calcProgress(a.currentAmount, a.totalAmount))
         }
     },
     actions: {
         async fetchUserCategories(userId: number) {
             this.categories = []
+            this.expenses = []
             const {findOne} = useStrapi()
 
             const response = await findOne("users", userId, {
@@ -131,26 +131,27 @@ export const useBalanceStore = defineStore("balanceStore", {
             const {create, update} = useStrapi()
             const authStore = useAuthStore()
             const user = authStore.user
+            let goal = null
             switch (type) {
                 case "create":
-                    await create("savings", {
+                    goal = await create("savings", {
                         title: payload.title,
                         totalAmount: payload.totalAmount,
                         currentAmount: payload.currentAmount,
                         endDate: new Date(payload.endDate).toISOString().slice(0, 10),
                         user: user.id
                     })
-                    await this.updateSavingsHistories(payload)
+                    await this.updateSavingsHistories(goal.data)
                     await this.fetchUserSavings(user.id)
                     break
                 case "update":
-                    await update("savings", payload.id, {
+                    goal = await update("savings", payload.id, {
                         title: payload.title,
                         totalAmount: payload.totalAmount,
                         currentAmount: payload.currentAmount,
                         endDate: new Date(payload.endDate).toISOString().slice(0, 10),
                     })
-                    await this.updateSavingsHistories(payload)
+                    await this.updateSavingsHistories(goal.data)
                     await this.fetchUserSavings(user.id)
                     break
             }
@@ -165,7 +166,7 @@ export const useBalanceStore = defineStore("balanceStore", {
         async updateSavingsHistories(saving: IGoal) {
             const {create} = useStrapi()
             await create("saving-histories", {
-                transactionAmount: saving.currentAmount,
+                transactionAmount: saving.attributes.currentAmount,
                 saving: saving.id
             })
         },

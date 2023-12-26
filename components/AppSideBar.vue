@@ -32,10 +32,8 @@
           >
             Dashboard
           </ULink>
-        </li><li
-          v-if="categories.length > 0"
-          class="w-full"
-        >
+        </li>
+        <li class="w-full">
           <ULink
             to="/expenses"
             class="block sm:p-1 hover:bg-primary-50 rounded-md"
@@ -45,10 +43,7 @@
             Expenses
           </ULink>
         </li>
-        <li
-          v-if="categories.length > 0"
-          class="w-full"
-        >
+        <li class="w-full">
           <ULink
             to="/savings"
             class="block sm:p-1 hover:bg-primary-50 rounded-md"

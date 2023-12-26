@@ -16,54 +16,56 @@
     </UButton>
   </UContainer>
   <div
-    class="responsive-grid"
     v-if="savings.length > 0"
+    class="grid gap-5"
   >
-    <UCard
-      class="w-full"
-      v-for="saving in sortedSavings"
-      :key="saving.id"
-    >
-      <template #header>
-        <header class="flex items-center justify-between">
-          <p class="text-zinc-800 text-lg font-semibold leading-tight">
-            {{ saving.title }}
-            <UIcon
-              v-if="saving.currentAmount >= saving.totalAmount"
-              name="i-heroicons-check-badge-solid"
-              class="text-green-600 text-lg"
-            />
+    <div class="responsive-grid">
+      <UCard
+        class="w-full"
+        v-for="saving in sortedSavings"
+        :key="saving.id"
+      >
+        <template #header>
+          <header class="flex items-center justify-between">
+            <p class="text-zinc-800 text-lg font-semibold leading-tight">
+              {{ saving.title }}
+              <UIcon
+                v-if="saving.currentAmount >= saving.totalAmount"
+                name="i-heroicons-check-badge-solid"
+                class="text-green-600 text-lg"
+              />
+            </p>
+            <UDropdown
+              :items="actions(saving)"
+              :popper="{placement: 'bottom-end'}"
+            >
+              <UButton
+                color="gray"
+                variant="solid"
+                icon="i-heroicons-ellipsis-horizontal-20-solid"
+              />
+            </UDropdown>
+          </header>
+        </template>
+        <div class="flex flex-col items-end gap-2">
+          <UProgress
+            indicator
+            :value="calcProgress(saving.currentAmount, saving.totalAmount)"
+          />
+          <p class="text-black text-opacity-80 text-xs font-normal">
+            {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
           </p>
-          <UDropdown
-            :items="actions(saving)"
-            :popper="{placement: 'bottom-end'}"
-          >
-            <UButton
-              color="gray"
-              variant="solid"
-              icon="i-heroicons-ellipsis-horizontal-20-solid"
-            />
-          </UDropdown>
-        </header>
-      </template>
-      <div class="flex flex-col items-end gap-2">
-        <UProgress
-          indicator
-          :value="calcProgress(saving.currentAmount, saving.totalAmount)"
-        />
-        <p class="text-black text-opacity-80 text-xs font-normal">
-          {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
-        </p>
-      </div>
-      <ul class="flex flex-col gap-2">
-        <li class="text-gray-800 text-lg font-semibold">
-          Details
-        </li>
-        <li class="text-black text-sm font-normal">
-          End date: <time>{{ new Date(saving.endDate).toLocaleDateString() }}</time>
-        </li>
-      </ul>
-    </UCard>
+        </div>
+        <ul class="flex flex-col gap-2">
+          <li class="text-gray-800 text-lg font-semibold">
+            Details
+          </li>
+          <li class="text-black text-sm font-normal">
+            End date: <time>{{ new Date(saving.endDate).toLocaleDateString() }}</time>
+          </li>
+        </ul>
+      </UCard>
+    </div>
     <UPagination
       class="justify-end"
       v-model="page"
@@ -203,6 +205,7 @@ const targetChartOptions = computed(() => ({
 
 onBeforeMount(async () => {
   if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
+  if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
 })
 
 definePageMeta({

@@ -92,7 +92,8 @@
     <div class="grid grid-cols-3 auto-rows-max gap-10">
       <UCard
         v-if="topThreeSavings.length > 0"
-        class="col-span-1 max-h-[450px]"
+        class="col-span-3 max-h-[450px]"
+        :class="{'col-span-1': expenses.length > 0}"
       >
         <template #header>
           <header class="flex items-center justify-between">
