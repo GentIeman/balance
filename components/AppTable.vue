@@ -35,9 +35,9 @@ import {UPagination, UTable, UButton, UDropdown} from "#components"
 import {type ITableProps} from "~/utils/interfaces"
 
 const page = ref<number>(1)
-//
+// init props as a variable
 const props = defineProps<ITableProps>()
-// r
+// and rows is reactive....
 const rows = computed(() => props.payload.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
 
 const emit = defineEmits(["showEditForm", "showDeleteForm"])
