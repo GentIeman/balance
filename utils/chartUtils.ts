@@ -78,7 +78,7 @@ export const generateLineChart = (data: object[], label: string, pointsKey: stri
     let labelsSet: object[] = []
     const annotations: object = {}
 
-    data.forEach((item, i) => {
+    data.forEach((item) => {
 
         const points = item[pointsKey]
         const aggregatedPoints = points.reduce((acc, point) => ({
