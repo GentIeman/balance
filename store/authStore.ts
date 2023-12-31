@@ -3,7 +3,7 @@ import type {IAuthState, IUser} from "~/utils/interfaces"
 
 export const useAuthStore = defineStore("authStore", {
     state: (): IAuthState => ({
-        user: {},
+        user: undefined,
     }),
     actions: {
         async login(payload: IUser) {
@@ -12,6 +12,7 @@ export const useAuthStore = defineStore("authStore", {
                 identifier: payload.email,
                 password: payload.password
             })
+            // @ts-ignore
             this.user = useStrapiUser()
         },
         async register(payload: IUser) {
@@ -25,6 +26,7 @@ export const useAuthStore = defineStore("authStore", {
                     // @ts-ignore
                     pensionYear: new Date(payload.pensionYear)
                 })
+            // @ts-ignore
             this.user = useStrapiUser()
         },
         logout() {

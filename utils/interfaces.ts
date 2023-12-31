@@ -1,4 +1,5 @@
 export interface IUser {
+    id?: number
     email: string,
     username?: string,
     password: string,
@@ -7,7 +8,7 @@ export interface IUser {
 }
 
 export interface IAuthState {
-    user: IUser | object
+    user?: IUser
 }
 
 export interface IHeader {
