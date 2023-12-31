@@ -1,16 +1,39 @@
 import {object, string, number, date} from "yup"
 
-export const registerFormValidation = object({
-    email: string().email("You must enter an email").required("Required"),
-    username: string().min(4, "Must be at least 4 characters"),
-    password: string().min(8, "Must be at least 8 characters"),
-    salary: number().moreThan(1, "We can't get 0 dollars"),
-    pensionYear: number().transform((value) => Number.isNaN(value) ? new Date().getFullYear() : value ).nullable().min(new Date().getFullYear(), "We can't go back in time").lessThan(new Date().getFullYear()+60, "Too far way")
+export const userRegistrationSchema = object().shape({
+    email: string()
+        .matches(/^[^;:<>/\\"`?!,+={}]*$/, "This email is invalid")
+        .email("You must enter an email")
+        .required("Required"),
+    username: string()
+        .matches(/^[a-zA-Z0-9_]*$/, "This username is invalid")
+        .required("Username is required")
+        .min(4, "Must be at least 4 characters")
+        .max(30, "Maximum number of values"),
+    password: string()
+        .min(8, "Must be at least 8 characters")
+        .required("Password is required"),
+    salary: number()
+        .transform((value) => Number.isNaN(value) ? null : value)
+        .moreThan(99, "More than 99")
+        .lessThan(999999, "Less than 999999")
+        .required("Salary is required"),
+    pensionYear: number()
+        .transform((value) => Number.isNaN(value) ? new Date().getFullYear() : value)
+        .nullable()
+        .min(new Date().getFullYear(), "We can't go back in time")
+        .lessThan(new Date().getFullYear()+60, "Too far way")
+        .notRequired()
 })
 
-export const loginFormValidation = object({
-    email: string().email("You must enter an email").required("Required"),
-    password: string().min(8, "Must be at least 8 characters"),
+export const userLoginSchema = object().shape({
+    email: string()
+        .matches(/^[^;:<>/\\"`?!,+={}]*$/, "This email is invalid")
+        .email("You must enter an email")
+        .required("Required"),
+    password: string()
+        .min(8, "Must be at least 8 characters")
+        .required("Password is required"),
 })
 
 export const categoryFormValidation = object({
