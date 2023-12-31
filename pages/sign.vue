@@ -131,7 +131,7 @@ const router = useRouter()
 
 const user = reactive<IUser>({
   email: "",
-  username: undefined,
+  username: "",
   password: "",
   salary: undefined,
   pensionYear: undefined
