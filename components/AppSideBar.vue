@@ -1,6 +1,10 @@
 <template>
   <aside class="sticky inset-0 flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[20px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
-    <Logo />
+    <Logo
+      class="w-full"
+      :width="204"
+      :height="59"
+    />
     <UButton
       variant="ghost"
       class="flex flex-col items-start solid-zinc-800 text-[20px] font-semibold"
