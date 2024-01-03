@@ -1,10 +1,6 @@
 <template>
-  <AppHeader
-    title="Dashboard"
-    subtitle="See your quick overview data right here"
-  />
   <UContainer
-    class="flex justify-center w-full sm:p-0 lg:p-0"
+    class="w-full sm:p-0 lg:p-0"
     v-if="categories.length == 0"
   >
     <UCard class="flex flex-col w-full justify-center">
