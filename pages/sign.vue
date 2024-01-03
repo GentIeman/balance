@@ -121,17 +121,15 @@
 <script setup lang="ts">
 import {UDivider, UButton, UNotification, UContainer, UForm, UFormGroup, UInput} from "#components"
 import type {IUser} from "~/utils/interfaces"
-import {useAuthStore} from "~/store/authStore"
 import {userRegistrationSchema, userLoginSchema} from "~/utils/schemes"
 import {type InferType} from "yup"
 import type {FormSubmitEvent} from "#ui/types/form"
 
-const authStore = useAuthStore()
 const router = useRouter()
 
 const user = reactive<IUser>({
   email: "",
-  username: "",
+  username: undefined,
   password: "",
   salary: undefined,
   pensionYear: undefined
@@ -147,17 +145,29 @@ const isShowNotification = ref<boolean>(false)
 
 type FormSchema = InferType<typeof formSchema.value>
 const onAuth = async (event: FormSubmitEvent<FormSchema>) => {
+  const {login, register} = useStrapiAuth()
   try {
     if (isLogin.value) {
-      await authStore.login(event.data)
+      await login({
+        identifier: event.data.email,
+        password: event.data.password
+      })
     } else {
-      await authStore.register(event.data)
+      await register({
+        email: event.data.email,
+        password: event.data.password,
+        username: event.data.username,
+        // @ts-ignore
+        salary: event.data.salary,
+        // @ts-ignore
+        pensionYear: new Date(event.data.pensionYear)
+      })
     }
     await router.push("/")
 
   } catch (err: any) {
-      isShowNotification.value = true
-      serverErrorDescription.value = err.error.message
+    isShowNotification.value = true
+    serverErrorDescription.value = err.error.message
   }
 }
 

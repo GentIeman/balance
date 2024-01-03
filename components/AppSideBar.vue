@@ -87,13 +87,12 @@
 
 <script setup lang="ts">
 import {AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
-import {useAuthStore} from "~/store/authStore"
 import expenseForm from "~/components/forms/expenseForm.vue"
 import {useCategoryStore} from "~/store/categoryStore"
+import type {IUser} from "~/utils/interfaces"
 
-const authStore = useAuthStore()
 const categoryStore = useCategoryStore()
-const {user} = storeToRefs(authStore)
+const user = useStrapiUser<IUser>()
 const {categories} = storeToRefs(categoryStore)
 const router = useRouter()
 const isShowExpenseForm = ref<boolean>(false)
@@ -106,7 +105,8 @@ const links = [
 ]
 
 const logout = () => {
-  authStore.logout()
+  const {logout} = useStrapiAuth()
+  logout()
   router.push("/sign")
 }
 </script>
