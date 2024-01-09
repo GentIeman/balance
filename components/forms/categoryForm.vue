@@ -1,7 +1,7 @@
 <template>
   <UForm
     class="flex flex-col gap-5 h-full"
-    :state="localCategory"
+    :state="category"
     :schema="categoryFormValidation"
     @submit="putCategory($event)"
   >
@@ -12,7 +12,7 @@
       required
     >
       <UInput
-        v-model="localCategory.title"
+        v-model="category.title"
         type="text"
         placeholder="Dream category"
       />
@@ -24,7 +24,7 @@
       required
     >
       <UInput
-        v-model="localCategory.budgetLimit"
+        v-model="category.budgetLimit"
         type="number"
         placeholder="1000"
       />
@@ -33,7 +33,7 @@
       block
       type="submit"
     >
-      {{ localCategory.id ? "Edit" : "Create" }}
+      {{ props.category.id ? "Edit" : "Create" }}
     </UButton>
   </UForm>
 </template>
@@ -42,29 +42,24 @@
 import {categoryFormValidation} from "~/utils/schemes"
 import {UButton, UForm, UFormGroup, UInput} from "#components"
 import type {ICategory, ICategoryFormProps} from "~/utils/interfaces"
-import {useBalanceStore} from "~/store/balanceStore"
-import type {InferType} from "yup"
+import {type InferType} from "yup"
 import type {FormSubmitEvent} from "#ui/types"
-const balanceStore = useBalanceStore()
+import {useCategoryStore} from "~/store/categoryStore"
+const categoryStore = useCategoryStore()
+const {initCategory} = categoryStore
 
-const categoryEmpty = reactive<ICategory>({
-  id: 0,
-  title: "",
-  budgetLimit: 0
-})
+const props = defineProps<ICategoryFormProps>()
+const category = reactive<ICategory>(props.category)
+const emits = defineEmits<{ close: [value: boolean] }>()
 
-const {category} = defineProps<ICategoryFormProps>()
-
-const localCategory = computed(() => {
-  return category ? category : categoryEmpty
-})
-
-const emit = defineEmits(["closeModal"])
 type categorySchema = InferType<typeof categoryFormValidation>
-const putCategory = (event: FormSubmitEvent<categorySchema>) => {
-  const operationType = category.id ? "update" : "create"
-  balanceStore.initCategory(event.data, operationType)
-  emit("closeModal")
+const putCategory = async(event: FormSubmitEvent<categorySchema>) => {
+  try {
+    await initCategory(event.data)
+  } catch (err) {
+    console.error("Error initialized category:", err)
+  }
+  emits("close", true)
 }
 </script>
 
