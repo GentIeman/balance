@@ -29,7 +29,6 @@ interface IHeaderObject {
 const headerContent: IHeaderObject[] = [
   {path: "/", title: "Dashboard", subtitle: "See your quick overview data right here"},
   {path: "/expenses", title: "Expenses", subtitle: "It is worth recording your expenses so as not to spend in the future"},
-  {path: "/pension", title: "Pension (beta)", subtitle: "It is worth thinking about pension today"},
   {path: "/savings", title: "Savings", subtitle: "Set savings for the future"}
 ]
 

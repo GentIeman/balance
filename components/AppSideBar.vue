@@ -104,7 +104,6 @@ const isShowExpenseForm = ref<boolean>(false)
 const links = [
   {to: "/", name: "Dashboard"},
   {to: "/expenses", name: "Expenses"},
-  {to: "/pension", name: "Pension"},
   {to: "/savings", name: "Savings"},
 ]
 
