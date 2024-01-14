@@ -22,21 +22,26 @@
     class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
   >
     <UPagination
-      v-if="props.payload.length > 0"
+      v-if="props.rows.length > 0"
       v-model="page"
       :page-count="pageCount"
-      :total="props.payload.length"
+      :total="props.rows.length"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import {UPagination, UTable, UButton, UDropdown} from "#components"
-import {type ITableProps} from "~/utils/interfaces"
+
+interface ITableProps {
+  rows: object[],
+  pageCount: number,
+  columns: object[]
+}
 
 const page = ref<number>(1)
 const props = defineProps<ITableProps>()
-const rows = computed(() => props.payload.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
+const rows = computed(() => props.rows.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
 
 const emit = defineEmits(["showEditForm", "showDeleteForm"])
 
