@@ -1,7 +1,7 @@
 <template>
   <Bar
-    :data="generateBarChartByTime(props.data, props.config, props.interval)"
-    :options="options"
+    :data="chartData"
+    :options="chartOptions"
   />
 </template>
 
@@ -13,37 +13,38 @@ const props = defineProps<{
   data: any[],
   options: object,
   config: IBarChartConfig,
-  interval: string
+  interval: string,
+  localeDateOptions: object
+  locales: string
 }>()
 
-const generateBarChartByTime = (payload: { [key: string]: any }[], config: IBarChartConfig, interval: string): IChart => {
-  const dataMap: { [key: string]: number } = {}
+const generateBarChartByTimeLine = (payload: { [key: string]: any }[], config: IBarChartConfig, interval: string): IChart => {
+  const dataMap: { [key: string]: number } = {};
 
-  payload.forEach((item) => {
-    const date: Date = new Date(item[config.structure.dateKey])
+  payload.forEach((item: any) => {
+    const date: Date = new Date(item[config.structure.dateKey]);
+
     const key = interval === "day"
-        ? date.toLocaleDateString()
-        : date.toLocaleDateString("en-US", { year: "numeric", month: "long" })
+        ? date.toLocaleDateString(props.locales)
+        : date.toLocaleDateString(props.locales, props.localeDateOptions ?? null)
 
-    dataMap[key] = (dataMap[key] || 0) + item[config.structure.contentKey]
-  })
+    dataMap[key] = (dataMap[key] || 0) + item[config.structure.contentKey];
+  });
 
-  const lastIntervals: Date[] = Array.from({ length: interval === "day" ? config.days : config.months }, (_, i) => {
-    const currentDate: Date = new Date()
-
-    if (interval === "day") {
+  const intervals = Array.from({ length: interval === "day" ? config.days : config.months}, (_, i) => {
+    const currentDate = new Date()
+    if (interval == "day") {
       currentDate.setDate(currentDate.getDate() - i)
     } else {
       currentDate.setMonth(currentDate.getMonth() - i)
     }
-
-    return currentDate
+    return currentDate.toLocaleDateString(props.locales, props.localeDateOptions ?? null)
   }).reverse()
 
-  const data = lastIntervals.map((interval: Date) => dataMap[interval.toLocaleDateString()] || 0)
+  const data = intervals.map((interval) => dataMap[interval] || 0)
 
   return {
-    labels: lastIntervals,
+    labels: intervals,
     datasets: [
       {
         label: config.chartLabel,
@@ -51,9 +52,11 @@ const generateBarChartByTime = (payload: { [key: string]: any }[], config: IBarC
         data: data,
       },
     ],
-  }
-}
-const options = computed(() => props.options)
+  };
+};
+
+const chartData = computed(() => generateBarChartByTimeLine(props.data, props.config, props.interval))
+const chartOptions = computed(() => props.options)
 
 </script>
 
