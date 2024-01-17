@@ -2,7 +2,7 @@
   <UForm
     class="flex flex-col gap-5 h-full"
     :state="category"
-    :schema="categoryFormValidation"
+    :schema="categorySchema"
     @submit="putCategory($event)"
   >
     <UFormGroup
@@ -39,10 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import {categoryFormValidation} from "~/utils/schemes"
 import {UButton, UForm, UFormGroup, UInput} from "#components"
 import type {ICategory} from "~/utils/interfaces"
-import {type InferType} from "yup"
+import {type InferType, number, object, string} from "yup"
 import type {FormSubmitEvent} from "#ui/types"
 import {useCategoryStore} from "~/store/categoryStore"
 const categoryStore = useCategoryStore()
@@ -52,7 +51,18 @@ const props = defineProps<{ category: ICategory }>()
 const emits = defineEmits<{ close: [value: boolean] }>()
 const category = computed(() => props.category)
 
-type categorySchema = InferType<typeof categoryFormValidation>
+const categorySchema = object().shape({
+  title: string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
+  budgetLimit: number()
+      .transform((value) => Number.isNaN(value) ? null : value )
+      .nullable()
+      .moreThan(9, "Not enough for the limit")
+      .max(9999999, "Can you do?").required("Required")
+})
+
+type categorySchema = InferType<typeof categorySchema>
 const putCategory = async(event: FormSubmitEvent<categorySchema>) => {
   try {
     await initCategory(event.data)
