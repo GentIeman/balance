@@ -1,7 +1,7 @@
 <template>
   <Pie
-    :data="generatePieChart(props.data, props.config)"
-    :options="options"
+    :data="chartData"
+    :options="chartOptions"
   />
 </template>
 
@@ -36,7 +36,8 @@ const generatePieChart = (payload: { [key: string]: any }[], config: IPieChartCo
     ],
   }
 }
-const options = computed(() => props.options)
+const chartData = computed(() => generatePieChart(props.data, props.config))
+const chartOptions = computed(() => props.options)
 
 </script>
 

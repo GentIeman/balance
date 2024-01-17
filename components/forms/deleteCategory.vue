@@ -10,14 +10,13 @@
           variant="ghost"
           icon="i-heroicons-x-mark-20-solid"
           class="-my-1"
-          @click="emit('closeModal')"
+          @click="emits('close')"
         />
       </div>
     </template>
     <UForm
       class="flex flex-col gap-5 h-full"
-      :state="{}"
-      @submit="removeCategory(category)"
+      @submit="removeCategory(props.category)"
     >
       <span class="text-black text-sm font-normal leading-tight">Are you sure you want to delete this category?</span>
       <div class="grid grid-cols-2 gap-10">
@@ -25,7 +24,7 @@
           block
           size="sm"
           class="bg-black bg-opacity-50"
-          @click.prevent="emit('closeModal')"
+          @click.prevent="emits('close')"
           type="button"
         >
           No
@@ -45,16 +44,17 @@
 
 <script setup lang="ts">
 import {UButton, UCard, UForm} from "#components"
-import {useBalanceStore} from "~/store/balanceStore"
-import type {ICategory, IDeleteCategory} from "~/utils/interfaces"
-const balanceStore = useBalanceStore()
+import type {ICategory} from "~/utils/interfaces"
+import {useCategoryStore} from "~/store/categoryStore"
+const categoryStore = useCategoryStore()
+const {deleteCategory} = categoryStore
 
-const {category} = defineProps<IDeleteCategory>()
+const props = defineProps<{ category: ICategory }>()
+const emits = defineEmits<{ close: [value: boolean] }>()
 
-const emit = defineEmits(["closeModal"])
 const removeCategory = (category: ICategory) => {
-  balanceStore.deleteCategory(category)
-  emit("closeModal")
+  deleteCategory(category)
+  emits("close", true)
 }
 </script>
 

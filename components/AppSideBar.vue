@@ -16,7 +16,7 @@
       block
       class="w-full"
       @click="isShowExpenseForm = true"
-      v-if="categories.length > 0"
+      v-if="getCategoriesCount > 0"
     >
       Add expense
     </UButton>
@@ -97,7 +97,7 @@ import type {IUser} from "~/utils/interfaces"
 
 const categoryStore = useCategoryStore()
 const user = useStrapiUser<IUser>()
-const {categories} = storeToRefs(categoryStore)
+const {getCategoriesCount} = storeToRefs(categoryStore)
 const router = useRouter()
 const isShowExpenseForm = ref<boolean>(false)
 
