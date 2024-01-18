@@ -15,7 +15,9 @@
       </UDropdown>
     </template>
     <template #status-data="{ row }">
-      {{ row.status.value }}
+      <span class="{''}">
+        {{ row.status.value }}
+      </span>
     </template>
   </UTable>
   <div
@@ -33,28 +35,30 @@
 <script setup lang="ts">
 import {UPagination, UTable, UButton, UDropdown} from "#components"
 
-interface ITableProps {
+const page = ref<number>(1)
+const props = defineProps<{
   rows: object[],
   pageCount: number,
   columns: object[]
-}
+}>()
 
-const page = ref<number>(1)
-const props = defineProps<ITableProps>()
 const rows = computed(() => props.rows.slice((page.value - 1) * props.pageCount, (page.value) * props.pageCount))
 
-const emit = defineEmits(["showEditForm", "showDeleteForm"])
+const emits = defineEmits<{
+  editModal: [value: object],
+  deleteModal: [value: object]
+}>()
 
 const actions = (row: object) => [
   [{
     label: 'Edit',
     icon: 'i-heroicons-pencil-square-20-solid',
-    click: () => emit("showEditForm", row)
+    click: () => emits("editModal", row)
   },
     {
       label: 'Delete',
       icon: 'i-heroicons-trash-20-solid',
-      click: () => emit("showDeleteForm", row)
+      click: () => emits("deleteModal", row)
     }]
 ]
 
