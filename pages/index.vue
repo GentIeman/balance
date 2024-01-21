@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import {UButton, UCard, UContainer, UModal, UProgress} from "#components"
+import {UButton, UCard, UContainer, UModal} from "#components"
 import CategoryForm from "~/components/forms/categoryForm.vue"
 import AppTable from "~/components/AppTable.vue"
 import {useExpenseStore} from "~/store/expenseStore"
@@ -140,10 +140,10 @@ const PieChartConfig = {
   backgroundColor: "color"
 }
 
-const timeLineBarConfig = {
+const timeLineBarConfig: IBarChartConfig = {
   structure: {dateKey: "createdAt", contentKey: "amount"},
   months: 12,
-  chartLabel: "Expenses by Month",
+  label: "Expenses by Month",
   backgroundColor: "cyan"
 }
 
