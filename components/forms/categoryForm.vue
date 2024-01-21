@@ -44,8 +44,7 @@ import type {ICategory} from "~/utils/interfaces"
 import {type InferType, number, object, string} from "yup"
 import type {FormSubmitEvent} from "#ui/types"
 import {useCategoryStore} from "~/store/categoryStore"
-const categoryStore = useCategoryStore()
-const {initCategory} = categoryStore
+const {initCategory} = useCategoryStore()
 
 const props = defineProps<{ category: ICategory }>()
 const emits = defineEmits<{ close: [value: boolean] }>()

@@ -46,8 +46,7 @@
 import {UButton, UCard, UForm} from "#components"
 import type {ICategory} from "~/utils/interfaces"
 import {useCategoryStore} from "~/store/categoryStore"
-const categoryStore = useCategoryStore()
-const {deleteCategory} = categoryStore
+const {deleteCategory} = useCategoryStore()
 
 const props = defineProps<{ category: ICategory }>()
 const emits = defineEmits<{ close: [value: boolean] }>()

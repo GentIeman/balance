@@ -1,16 +1,17 @@
 <template>
   <header>
     <h1 class="flex flex-col text-zinc-800 text-[40px] font-semibold">
-      {{ title }}
-      <span class="text-zinc-800 text-lg font-light"> {{ subtitle }} </span>
+      {{ props.title }}
+      <span class="text-zinc-800 text-lg font-light"> {{ props.subtitle }} </span>
     </h1>
   </header>
 </template>
 
 <script setup lang="ts">
-import type {IHeader} from "~/utils/interfaces"
-
-const {title, subtitle} = defineProps<IHeader>()
+const props = defineProps<{
+  title: string,
+  subtitle?: string
+}>()
 </script>
 
 <style scoped>

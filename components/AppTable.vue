@@ -15,8 +15,8 @@
       </UDropdown>
     </template>
     <template #status-data="{ row }">
-      <span class="{''}">
-        {{ row.status.value }}
+      <span :class="{'text-red-500': row.status == 'Warn', 'text-green-500': row.status == 'Good'}">
+        {{ row.status }}
       </span>
     </template>
   </UTable>
