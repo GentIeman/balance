@@ -19,19 +19,19 @@ const props = defineProps<{
 }>()
 
 const generateBarChartByTimeLine = (payload: { [key: string]: any }[], config: IBarChartConfig, interval: string): IChart => {
-  const dataMap: { [key: string]: number } = {};
+  const dataMap: { [key: string]: number } = {}
 
   payload.forEach((item: any) => {
-    const date: Date = new Date(item[config.structure.dateKey]);
+    const date: Date = new Date(item[config.structure.dateKey])
 
     const key = interval === "day"
         ? date.toLocaleDateString(props.locales)
         : date.toLocaleDateString(props.locales, props.localeDateOptions ?? null)
 
-    dataMap[key] = (dataMap[key] || 0) + item[config.structure.contentKey];
-  });
+    dataMap[key] = (dataMap[key] || 0) + item[config.structure.contentKey]
+  })
 
-  const intervals = Array.from({ length: interval === "day" ? config.days : config.months}, (_, i) => {
+  const intervals = Array.from({length: interval === "day" ? config.days || 0 : config.months || 0}, (_, i) => {
     const currentDate = new Date()
     if (interval == "day") {
       currentDate.setDate(currentDate.getDate() - i)
@@ -52,8 +52,8 @@ const generateBarChartByTimeLine = (payload: { [key: string]: any }[], config: I
         data: data,
       },
     ],
-  };
-};
+  }
+}
 
 const chartData = computed(() => generateBarChartByTimeLine(props.data, props.config, props.interval))
 const chartOptions = computed(() => props.options)
