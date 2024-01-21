@@ -121,16 +121,22 @@ import {useExpenseStore} from "~/store/expenseStore"
 import TimeLineBarChart from "~/components/charts/timeLineBarChart.vue"
 import PieChart from "~/components/charts/pieChart.vue"
 import type {IBarChartConfig} from "~/utils/interfaces"
+import {useCategoryStore} from "~/store/categoryStore"
 
 const expenseStore = useExpenseStore()
 const {
   expenses,
-  getExpensesCount,
+  getExpensesCount
+} = storeToRefs(expenseStore)
+const {fetchUserExpenses} = expenseStore
+
+
+const categoryStore = useCategoryStore()
+const {
   getTotalExpensesByCategory,
   getCategoryStatus,
   getCategoriesCount
-} = storeToRefs(expenseStore)
-const {fetchUserExpenses} = expenseStore
+} = storeToRefs(categoryStore)
 
 const isShowCategoryForm = ref<boolean>(false)
 
