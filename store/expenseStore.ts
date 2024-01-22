@@ -64,6 +64,32 @@ export const useExpenseStore = defineStore("expenseStore", {
                 ? this.expenses.push(initializedExpense.attributes)
                 : (this.expenses[existingExpenseIndex] = initializedExpense.attributes)
         },
+        async initItem<T extends { id: number }>(payload: T, contentType: string): Promise<void> {
+            const {create, update} = useStrapi()
+            const user = useStrapiUser<IUser>()
+            const {data: initializedItem} = await (
+                payload.id == undefined
+                    ? create(contentType, {...payload, user: user.value.id})
+                    : update(contentType, payload.id, {...payload})
+            )
+
+            const targetArray = (this as any)[contentType]
+            
+            const existingItemIndex: number = targetArray.findIndex(
+                (existingItem: T): boolean => existingItem.id === initializedItem.attributes.id
+            )
+
+            existingItemIndex === -1
+                ? targetArray.push(initializedItem.attributes)
+                : targetArray[existingItemIndex] = initializedItem.attributes
+        },
+        async deleteItem<T extends { id: number }>(payload: T, contentType: string) {
+            const {delete: _delete} = useStrapi()
+            const targetArray = (this as any)[contentType]
+
+            await _delete(contentType, payload.id)
+            targetArray.splice(targetArray.findIndex((findItem: T): boolean => findItem.id === payload.id), 1)
+        },
         async deleteExpense(expense: IExpense): Promise<void> {
             const {delete: _delete} = useStrapi()
             await _delete("categories", expense.id)
