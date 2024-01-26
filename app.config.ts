@@ -6,7 +6,6 @@ export default defineAppConfig({
             default: {
                 size: "sm",
                 color: "primary",
-                block: true
             },
         },
         formGroup: {
