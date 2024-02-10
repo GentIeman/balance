@@ -1,8 +1,8 @@
 <template>
   <UForm
     class="flex flex-col gap-5 h-full"
-    :state="localCategory"
-    :schema="categoryFormValidation"
+    :state="category"
+    :schema="categorySchema"
     @submit="putCategory($event)"
   >
     <UFormGroup
@@ -12,7 +12,7 @@
       required
     >
       <UInput
-        v-model="localCategory.title"
+        v-model="category.title"
         type="text"
         placeholder="Dream category"
       />
@@ -24,7 +24,7 @@
       required
     >
       <UInput
-        v-model="localCategory.budgetLimit"
+        v-model="category.budgetLimit"
         type="number"
         placeholder="1000"
       />
@@ -33,38 +33,42 @@
       block
       type="submit"
     >
-      {{ localCategory.id ? "Edit" : "Create" }}
+      {{ category.id ? "Edit" : "Create" }}
     </UButton>
   </UForm>
 </template>
 
 <script setup lang="ts">
-import {categoryFormValidation} from "~/utils/schemes"
 import {UButton, UForm, UFormGroup, UInput} from "#components"
-import type {ICategory, ICategoryFormProps} from "~/utils/interfaces"
-import {useBalanceStore} from "~/store/balanceStore"
-import type {InferType} from "yup"
+import type {ICategory} from "~/utils/interfaces"
+import {type InferType, number, object, string} from "yup"
 import type {FormSubmitEvent} from "#ui/types"
-const balanceStore = useBalanceStore()
+import {useCategoryStore} from "~/store/categoryStore"
+const {initCategory} = useCategoryStore()
 
-const categoryEmpty = reactive<ICategory>({
-  id: 0,
-  title: "",
-  budgetLimit: 0
+const props = defineProps<{ category: ICategory }>()
+const emits = defineEmits<{ close: [value: boolean] }>()
+const category = computed(() => props.category)
+
+const categorySchema = object().shape({
+  title: string()
+      .min(3, "Must be at least 3 characters")
+      .required("Required"),
+  budgetLimit: number()
+      .transform((value) => Number.isNaN(value) ? null : value )
+      .nullable()
+      .moreThan(9, "Not enough for the limit")
+      .max(9999999, "Can you do?").required("Required")
 })
 
-const {category} = defineProps<ICategoryFormProps>()
-
-const localCategory = computed(() => {
-  return category ? category : categoryEmpty
-})
-
-const emit = defineEmits(["closeModal"])
-type categorySchema = InferType<typeof categoryFormValidation>
-const putCategory = (event: FormSubmitEvent<categorySchema>) => {
-  const operationType = category.id ? "update" : "create"
-  balanceStore.initCategory(event.data, operationType)
-  emit("closeModal")
+type categorySchema = InferType<typeof categorySchema>
+const putCategory = async(event: FormSubmitEvent<categorySchema>) => {
+  try {
+    await initCategory(event.data)
+  } catch (err) {
+    console.error("Error initialized category:", err)
+  }
+  emits("close", true)
 }
 </script>
 

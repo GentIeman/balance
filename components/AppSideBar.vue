@@ -1,6 +1,10 @@
 <template>
   <aside class="sticky inset-0 flex flex-col gap-5 h-screen w-[300px] lg:px-[22px] sm:px-[22px] py-[20px] rounded-r-[20px] shadow-[2px_0px_4px_0px_rgba(0,0,0,0.10)] bg-white">
-    <Logo />
+    <Logo
+      class="w-full"
+      :width="204"
+      :height="59"
+    />
     <UButton
       variant="ghost"
       class="flex flex-col items-start solid-zinc-800 text-[20px] font-semibold"
@@ -12,60 +16,37 @@
       block
       class="w-full"
       @click="isShowExpenseForm = true"
-      v-if="categories.length > 0"
+      v-if="getCategoriesCount > 0"
     >
       Add expense
     </UButton>
     <div
       class="flex flex-col w-full gap-3"
     >
-      <h2 class="sm:p-1 text-zinc-800 text-lg font-semibold leading-none">
-        Menu
-      </h2>
       <ul class="flex-col justify-center items-start gap-2.5 inline-flex">
         <li class="w-full">
-          <ULink
-            to="/"
-            class="block sm:p-1 hover:bg-primary-50 rounded-md"
-            active-class="text-cyan-500 text-base font-medium leading-snug"
-            inactive-class="text-slate-500 text-base font-medium leading-snug"
-          >
-            Dashboard
-          </ULink>
+          <h2 class="sm:p-1 text-zinc-800 text-lg font-semibold leading-none">
+            Menu
+          </h2>
         </li>
-        <li class="w-full">
-          <ULink
-            to="/expenses"
-            class="block sm:p-1 hover:bg-primary-50 rounded-md"
-            active-class="text-cyan-500 text-base font-medium leading-snug"
-            inactive-class="text-slate-500 text-base font-medium leading-snug"
-          >
-            Expenses
-          </ULink>
-        </li>
-        <li class="w-full">
-          <ULink
-            to="/savings"
-            class="block sm:p-1 hover:bg-primary-50 rounded-md"
-            active-class="text-cyan-500 text-base font-medium leading-snug"
-            inactive-class="text-slate-500 text-base font-medium leading-snug"
-          >
-            Savings
-          </ULink>
-        </li>
-        <li
-          v-if="user.pensionYear != null"
-          class="w-full"
+        <template
+          v-for="(link, index) in links"
+          :key="index"
         >
-          <ULink
-            to="/pension"
-            class="block sm:p-1 hover:bg-primary-50 rounded-md"
-            active-class="text-cyan-500 text-base font-medium leading-snug"
-            inactive-class="text-slate-500 text-base font-medium leading-snug"
+          <li
+            class="w-full"
+            v-if="link.name !== 'Pension' || (link.name === 'Pension' && user?.pensionYear)"
           >
-            Pension
-          </ULink>
-        </li>
+            <ULink
+              :to="{path: link.to}"
+              class="block sm:p-1 hover:bg-primary-50 rounded-md"
+              active-class="text-cyan-500 text-base font-medium leading-snug"
+              inactive-class="text-slate-500 text-base font-medium leading-snug"
+            >
+              {{ link.name }}
+            </ULink>
+          </li>
+        </template>
       </ul>
     </div>
     <div class="h-full" />
@@ -75,7 +56,7 @@
       block
       color="primary"
       variant="outline"
-      @click="signOut()"
+      @click="logout()"
       trailing
     >
       Log out
@@ -110,20 +91,25 @@
 
 <script setup lang="ts">
 import {AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
-import {useAuthStore} from "~/store/authStore"
-import {useBalanceStore} from "~/store/balanceStore"
 import expenseForm from "~/components/forms/expenseForm.vue"
-const authStore = useAuthStore()
-const user = authStore.user
-const router = useRouter()
+import {useCategoryStore} from "~/store/categoryStore"
+import type {IUser} from "~/utils/interfaces"
 
+const categoryStore = useCategoryStore()
+const user = useStrapiUser<IUser>()
+const {getCategoriesCount} = storeToRefs(categoryStore)
+const router = useRouter()
 const isShowExpenseForm = ref<boolean>(false)
 
-const balanceStore = useBalanceStore()
-const categories = computed(() => balanceStore.getCategories())
+const links = [
+  {to: "/", name: "Dashboard"},
+  {to: "/expenses", name: "Expenses"},
+  {to: "/savings", name: "Savings"},
+]
 
-const signOut = () => {
-  authStore.auth("logout", null)
+const logout = () => {
+  const {logout} = useStrapiAuth()
+  logout()
   router.push("/sign")
 }
 </script>

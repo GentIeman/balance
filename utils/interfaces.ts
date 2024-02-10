@@ -1,24 +1,14 @@
 export interface IUser {
+    id?: number
     email: string,
     username?: string,
     password: string,
-    salary?: number | null,
-    pensionYear?: number | null
+    salary?: number,
+    pensionYear?: number
 }
 
 export interface IAuthState {
-    user: IUser | object
-    errors: IServerErrors | null,
-}
-
-export interface IServerErrors {
-    name: string,
-    message: string,
-    status: number
-}
-
-export interface IAuthFormProps {
-    state: IUser
+    user?: IUser
 }
 
 export interface IHeader {

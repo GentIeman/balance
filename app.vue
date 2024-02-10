@@ -9,15 +9,6 @@ import {NuxtPage, NuxtLayout} from "#components"
 </script>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  height: 100vh;
-}
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
