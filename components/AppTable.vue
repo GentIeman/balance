@@ -1,5 +1,6 @@
 <template>
   <UTable
+    loading="true"
     :rows="rows"
     :columns="props.columns"
   >
