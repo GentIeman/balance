@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const generatePieChart = (payload: { [key: string]: any }[], config: IPieChartConfig): IChart => {
   const labels = payload.map(item => item[config.label])
-  const backgroundColor = payload.map(item => item[config.backgroundColor])
+  const backgroundColor = payload.map(item => "#" + item[config.colorKey])
   const data = payload.map(item => item[config.dataKey])
   return {
     labels: labels,
