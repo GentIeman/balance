@@ -9,7 +9,14 @@ export default defineNuxtConfig({
         }
     },
     devtools: {enabled: false},
-    modules: ["@nuxtjs/strapi", "@nuxt/ui", "@nuxtjs/eslint-module", "@nuxtjs/color-mode", "@pinia/nuxt"],
+    modules: [
+        "@nuxtjs/strapi",
+        "@nuxt/ui",
+        "@nuxtjs/eslint-module",
+        "@nuxtjs/color-mode",
+        "@pinia/nuxt",
+        "@nuxt/content"
+    ],
     colorMode: {
         preference: "light",
     },
