@@ -34,6 +34,11 @@
       title="Notification"
     />
   </section>
+  <AppLoader
+    v-if="isLoader"
+    size="6rem"
+    icon="i-heroicons-arrow-path-rounded-square"
+  />
 </template>
 <script setup lang="ts">
 import AppForm from "~/components/AppForm.vue"
@@ -72,6 +77,7 @@ const onAuth = async (event: IUser) => {
         pensionYear: new Date(event.data.pensionYear)
       })
     }
+    isLoader.value = true
     await router.push("/")
 
   } catch (err: any) {
