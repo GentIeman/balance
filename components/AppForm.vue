@@ -6,7 +6,7 @@
     @submit="submit($event)"
   >
     <UFormGroup
-      v-for="input in schema.input"
+      v-for="input in form.schema.input"
       :key="input.id"
       :name="input.name"
       :label="input.label"
@@ -15,7 +15,7 @@
     >
       <USelectMenu
         v-if="input.select"
-        v-model="item[input.name]"
+        v-model="state[input.name]"
         :placeholder="input.placeholder"
         :options="props.selectOptions"
         :by="props.selectBy"
@@ -23,7 +23,7 @@
       />
       <UInput
         v-if="input"
-        v-model="item[input.name]"
+        v-model="state[input.name]"
         @input="$event.target.value = input.type == 'number' ? Math.max(input.min, Math.min(input.max, $event.target.value)) : $event.target.value"
         :type="input.type === 'password' && isShowPassword ? 'text' : input.type"
         :placeholder="input.placeholder"
@@ -46,7 +46,7 @@
     </UFormGroup>
     <UButton
       block
-      v-for="button in schema.button"
+      v-for="button in form.schema.button"
       :key="button.id"
       :type="button.type"
     >
@@ -75,19 +75,20 @@ const props = defineProps<{
 const emits = defineEmits<{ close: [value: boolean] }>()
 
 const dirLowerCase = computed(() => props.dir.toLowerCase())
-const item = computed(() => props.state)
+const state = computed(() => props.state)
 const isShowPassword = ref<boolean>(false)
 
-const { schema, rules, config } = await queryContent(`forms/${dirLowerCase.value}/form`).findOne()
+const forms = await queryContent("forms").find()
+const form = computed(() => forms.find((form) => form._dir === dirLowerCase.value))
 
-const yupSchema = buildYup(rules, config as object)
-type schema = InferType<typeof yupSchema>
+const yupSchema = buildYup(form.value?.rules, form.value?.config as object)
+type Schema = InferType<typeof yupSchema>
 
-const submit = async (event: FormSubmitEvent<schema>) => {
+const submit = async (event: FormSubmitEvent<Schema>) => {
   try {
     // await props.func(event.data, props.contentType)
-  } catch (err) {
-    console.error(`Error initialized ${props.contentType}:`, err)
+  } catch (error) {
+    console.error(`Error ${props.contentType}:`, error)
   }
   emits("close", true)
 }
