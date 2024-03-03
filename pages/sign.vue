@@ -4,97 +4,14 @@
       <h2 class="w-full text-2xl text-zinc-800 font-semibold">
         {{ isLogin ? "Welcome back" : "Hello" }}
       </h2>
-      <UForm
-        :state="user"
+      <AppForm
         @submit="onAuth($event)"
-        :schema="formSchema"
-        class="flex flex-col gap-5 h-full"
-      >
-        <UFormGroup
-          name="email"
-          size="sm"
-          label="Email"
-          required
-        >
-          <UInput
-            v-model.trim="user.email"
-            type="email"
-            placeholder="you@example.com"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="!isLogin"
-          description="You can use a-z, 0-9 and underscores. Min length is 4 character"
-          name="username"
-          size="sm"
-          label="Username"
-          required
-        >
-          <UInput
-            v-model.trim="user.username"
-            type="text"
-            placeholder="Username"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="!isLogin"
-          name="salary"
-          size="sm"
-          label="Salary"
-          required
-        >
-          <UInput
-            v-model.number="user.salary"
-            type="number"
-            placeholder="1000"
-          />
-        </UFormGroup>
-        <UFormGroup
-          v-if="!isLogin"
-          name="pensionYear"
-          size="sm"
-          label="Penstion date"
-          hint="Optional"
-        >
-          <UInput
-            v-model="user.pensionYear"
-            type="number"
-            :placeholder="`${new Date().getFullYear()}`"
-          />
-        </UFormGroup>
-        <UFormGroup
-          name="password"
-          size="sm"
-          label="Password"
-          required
-        >
-          <UInput
-            v-model="user.password"
-            :type="isShowPassword ? 'text' : 'password'"
-            placeholder="****"
-            autocomplete
-            :ui="{ icon: { trailing: { pointer: '' } } }"
-          >
-            <template #trailing>
-              <UButton
-                color="gray"
-                variant="link"
-                size="sm"
-                :icon="isShowPassword ? 'i-heroicons-eye-20-solid' : 'i-heroicons-eye-slash-20-solid'"
-                @click="isShowPassword = !isShowPassword"
-                :padded="false"
-              />
-            </template>
-          </UInput>
-        </UFormGroup>
-        <UButton
-          block
-          type="submit"
-        >
-          {{ isLogin ? "Sign in" : "Sign up" }}
-        </UButton>
-      </UForm>
-      <UDivider :ui="{ border: { size: { horizontal: 'border-t-2' } } }" />
+        :dir="isLogin ? 'login' : 'register'"
+        :state="user"
+        :type="isLogin ? 'Sign in' : 'Sign up'"
+        :func="onAuth"
+      />
+      <UDivider />
       <p class="text-gray-600">
         {{ isLogin ? "Not registered yet?" : "Have you been here before?" }}
         <UButton
@@ -109,8 +26,8 @@
     <UNotification
       class="absolute top-[90px] bottom-auto max-w-[500px]"
       color="rose"
-      @close="isShowNotification = false"
-      v-if="isShowNotification"
+      @close="serverErrorDescription = ''"
+      v-if="serverErrorDescription != null"
       id="3"
       :timeout="3000"
       :description="serverErrorDescription"
@@ -119,11 +36,9 @@
   </section>
 </template>
 <script setup lang="ts">
-import {UDivider, UButton, UNotification, UContainer, UForm, UFormGroup, UInput} from "#components"
-import type {IUser} from "~/utils/interfaces"
-import {userRegistrationSchema, userLoginSchema} from "~/utils/schemes"
-import {type InferType} from "yup"
-import type {FormSubmitEvent} from "#ui/types/form"
+import AppForm from "~/components/AppForm.vue"
+import {UDivider, UButton, UNotification, UContainer} from "#components"
+import AppLoader from "~/components/AppLoader.vue"
 
 const router = useRouter()
 
@@ -135,16 +50,12 @@ const user = reactive<IUser>({
   pensionYear: undefined
 })
 
-const isShowPassword = ref<boolean>(false)
+const isLoader = ref<boolean>(false)
 const isLogin = ref<boolean>(true)
 
-const formSchema = computed(() => isLogin.value ? userLoginSchema : userRegistrationSchema)
-
 const serverErrorDescription = ref<string | null>(null)
-const isShowNotification = ref<boolean>(false)
 
-type FormSchema = InferType<typeof formSchema.value>
-const onAuth = async (event: FormSubmitEvent<FormSchema>) => {
+const onAuth = async (event: IUser) => {
   const {login, register} = useStrapiAuth()
   try {
     if (isLogin.value) {
@@ -157,16 +68,13 @@ const onAuth = async (event: FormSubmitEvent<FormSchema>) => {
         email: event.data.email,
         password: event.data.password,
         username: event.data.username,
-        // @ts-ignore
         salary: event.data.salary,
-        // @ts-ignore
         pensionYear: new Date(event.data.pensionYear)
       })
     }
     await router.push("/")
 
   } catch (err: any) {
-    isShowNotification.value = true
     serverErrorDescription.value = err.error.message
   }
 }
