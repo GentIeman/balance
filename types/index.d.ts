@@ -50,4 +50,11 @@ declare global {
         dataKey: string,
         colorKey: string
     }
+
+    interface ISaving {
+        title: string,
+        totalAmount: number,
+        currentAmount: number,
+        endDate: string,
+    }
 }
