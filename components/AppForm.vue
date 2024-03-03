@@ -3,7 +3,6 @@
     :state="props.state"
     :schema="yupSchema"
     class="flex flex-col gap-5 h-full"
-    @submit="submit($event)"
   >
     <UFormGroup
       v-for="input in form.schema.input"
@@ -59,17 +58,13 @@
 
 import {UButton, UForm, UFormGroup, UInput, USelectMenu} from "#components"
 import {buildYup} from "schema-to-yup"
-import type {InferType} from "yup"
-import type {FormSubmitEvent} from "#ui/types"
 
 const props = defineProps<{
   dir: string,
   type: string
   state: object,
   selectOptions?: object[]
-  selectBy?: string,
-  contentType: string,
-  func?: Function
+  selectBy?: string
 }>()
 
 const emits = defineEmits<{ close: [value: boolean] }>()
@@ -82,14 +77,4 @@ const forms = await queryContent("forms").find()
 const form = computed(() => forms.find((form) => form._dir === dirLowerCase.value))
 
 const yupSchema = buildYup(form.value?.rules, form.value?.config as object)
-type Schema = InferType<typeof yupSchema>
-
-const submit = async (event: FormSubmitEvent<Schema>) => {
-  try {
-    // await props.func(event.data, props.contentType)
-  } catch (error) {
-    console.error(`Error ${props.contentType}:`, error)
-  }
-  emits("close", true)
-}
 </script>
