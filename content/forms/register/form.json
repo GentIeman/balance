@@ -1,0 +1,82 @@
+{
+  "schema": {
+    "input": [
+      {
+        "type": "email",
+        "placeholder": "you@example.com",
+        "disable": false,
+        "name": "email",
+        "label": "Your email",
+        "required": true
+      },
+      {
+        "type": "text",
+        "placeholder": "Username",
+        "disable": false,
+        "name": "username",
+        "label": "Username",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "name": "salary",
+        "label": "Salary",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "Pension year",
+        "disable": false,
+        "name": "pensionYear",
+        "label": "Pension year",
+        "required": false,
+        "hint": "Optional"
+      },
+      {
+        "type": "password",
+        "placeholder": "***",
+        "disable": false,
+        "require": true,
+        "name": "password",
+        "required": true,
+        "label": "Password"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Sign in",
+    "description": "Sign in",
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email",
+        "required": true
+      },
+      "password": {
+        "type": "string",
+        "min": 8,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "email": {
+        "required": "Required",
+        "min": "Must be at least 3 characters"
+      },
+      "password": {
+        "min": "Must be at least 8 characters",
+        "required": "Required"
+      }
+    }
+  }
+}

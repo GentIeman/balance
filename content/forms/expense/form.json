@@ -1,0 +1,57 @@
+{
+  "schema": {
+    "select": [
+      {
+        "type": "email",
+        "placeholder": "Category",
+        "disable": false,
+        "name": "category",
+        "label": "Category",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "require": true,
+        "name": "amount",
+        "required": true,
+        "label": "Amount",
+        "min": 1,
+        "max": 999999
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Expense",
+    "description": "Create/update expense",
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email",
+        "required": true
+      },
+      "password": {
+        "type": "string",
+        "min": 8,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "category": {
+        "required": "Required"
+      },
+      "amount": {
+        "required": "Required"
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema": {
+    "select": [
+      {
+        "type": "text",
+        "placeholder": "Dream house",
+        "disable": false,
+        "name": "title",
+        "label": "Title",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "name": "totalAmount",
+        "label": "Amount",
+        "required": true,
+        "min": 10
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "require": false,
+        "name": "currentAmount",
+        "required": true,
+        "label": "Current amount",
+        "min": 1,
+        "max": 999999
+      },
+      {
+        "type": "number",
+        "placeholder": "yyyy",
+        "disable": false,
+        "require": true,
+        "name": "endYear",
+        "required": true,
+        "label": "End year"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Saving",
+    "description": "Create/update saving",
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email",
+        "required": true
+      },
+      "password": {
+        "type": "string",
+        "min": 8,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "title": {
+        "required": "Required"
+      },
+      "totalAmount": {
+        "required": "Required"
+      },
+      "endYear": {
+        "required": "Required",
+        "typeError": "Invalid date"
+      }
+    }
+  }
+}
