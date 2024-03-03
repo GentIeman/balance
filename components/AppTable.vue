@@ -4,9 +4,7 @@
     :rows="rows"
     :columns="props.columns"
   >
-    <template
-      #actions-data="{ row }"
-    >
+    <template #actions-data="{ row }">
       <UDropdown :items="actions(row)">
         <UButton
           color="gray"
@@ -21,20 +19,18 @@
       </span>
     </template>
   </UTable>
-  <div
-    class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700"
-  >
+  <UContainer class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
     <UPagination
       v-if="props.rows.length > 0"
       v-model="page"
       :page-count="pageCount"
       :total="props.rows.length"
     />
-  </div>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
-import {UPagination, UTable, UButton, UDropdown} from "#components"
+import {UPagination, UTable, UButton, UDropdown, UContainer} from "#components"
 
 const page = ref<number>(1)
 const props = defineProps<{
