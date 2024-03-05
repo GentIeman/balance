@@ -8,7 +8,7 @@
         <header class="flex">
           <h2 class=" flex flex-col text-zinc-800 text-[30px] font-semibold">
             Hello 👋
-            <span class="text-zinc-600 text-lg font-normal">You don't have any categories yet</span>
+            <span class="text-zinc-600 text-lg font-normal">You don't have any expenses yet</span>
           </h2>
         </header>
       </template>
@@ -16,7 +16,7 @@
         block
         @click="isShowCategoryForm = true"
       >
-        Create category
+        First expense
       </UButton>
     </UCard>
     <UModal
@@ -27,7 +27,7 @@
         <template #header>
           <header class="flex items-center justify-between">
             <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Create category
+              First expense
             </h3>
             <UButton
               color="gray"
@@ -38,9 +38,13 @@
             />
           </header>
         </template>
-        <CategoryForm
-          @close-modal="isShowCategoryForm = false"
-          :category="{}"
+        <AppForm
+          @submit="initItem($event, 'categories')"
+          dir="expense"
+          :state="{}"
+          :select-options="categories"
+          select-by="title"
+          type="Create"
         />
       </UCard>
     </UModal>
@@ -70,13 +74,12 @@
             {key: 'title', label: 'Title', sortable: true},
             {key: 'budgetLimit', label: 'Limit', sortable: true},
             {key: 'status', label: 'Status', sortable: true}
-          ]" 
+          ]"
         />
       </UCard>
       <UCard
         v-if="getExpensesCount > 0"
         class="col-span-1"
-        :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >
         <template #header>
           <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -86,7 +89,7 @@
         <UContainer class="grid place-items-center h-full w-full">
           <PieChart
             :data="getTotalExpensesByCategory()"
-            :config="PieChartConfig"
+            :config="pieChartConfig"
             :options="{maintainAspectRatio: false}"
           />
         </UContainer>
@@ -96,7 +99,6 @@
       <UCard
         v-if="getExpensesCount > 0"
         class="grid col-span-2 bg-white"
-        :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >
         <UContainer class="h-full">
           <TimeLineBarChart
@@ -104,7 +106,6 @@
             :locale-date-options="{ year: 'numeric', month: 'long' }"
             :data="expenses"
             :options="{maintainAspectRatio: false, responsive: true}"
-            interval="month"
             :config="timeLineBarConfig"
           />
         </UContainer>
@@ -115,35 +116,33 @@
 
 <script setup lang="ts">
 import {UButton, UCard, UContainer, UModal} from "#components"
-import CategoryForm from "~/components/forms/categoryForm.vue"
+import AppForm from "~/components/AppForm.vue"
 import AppTable from "~/components/AppTable.vue"
 import {useExpenseStore} from "~/store/expenseStore"
 import TimeLineBarChart from "~/components/charts/timeLineBarChart.vue"
 import PieChart from "~/components/charts/pieChart.vue"
-import type {IBarChartConfig} from "~/utils/interfaces"
-import {useCategoryStore} from "~/store/categoryStore"
 
 const expenseStore = useExpenseStore()
 const {
+  categories,
   expenses,
-  getExpensesCount
-} = storeToRefs(expenseStore)
-const {fetchUserExpenses} = expenseStore
-
-
-const categoryStore = useCategoryStore()
-const {
-  getTotalExpensesByCategory,
+  getExpensesCount,
   getCategoryStatus,
-  getCategoriesCount
-} = storeToRefs(categoryStore)
+  getTotalExpensesByCategory
+} = storeToRefs(expenseStore)
+
+const {
+  initItem,
+  fetchUserExpenses,
+  fetchUserCategories
+} = expenseStore
 
 const isShowCategoryForm = ref<boolean>(false)
 
-const PieChartConfig = {
+const pieChartConfig: IPieChartConfig = {
   label: "title",
   dataKey: "totalExpenses",
-  backgroundColor: "color"
+  colorKey: "color"
 }
 
 const timeLineBarConfig: IBarChartConfig = {
@@ -153,7 +152,7 @@ const timeLineBarConfig: IBarChartConfig = {
   backgroundColor: "cyan"
 }
 
-definePageMeta({ middleware: ["auth"] })
+definePageMeta({middleware: ["auth"]})
 
 useSeoMeta({
   title: "Dashboard",
@@ -162,6 +161,7 @@ useSeoMeta({
 
 onBeforeMount(async () => {
   await fetchUserExpenses()
+  await fetchUserCategories()
 })
 
 </script>
