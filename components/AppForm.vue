@@ -5,6 +5,34 @@
     class="flex flex-col gap-5 h-full"
   >
     <UFormGroup
+      v-for="select in form.schema.select"
+      :key="select.id"
+      :name="select.name"
+      :label="select.label"
+      :required="select.required"
+      :hint="select.hint"
+    >
+      <USelectMenu
+        :searchable="select.isSearchable"
+        :searchable-placeholder="select.searchPlaceholder"
+        v-model="state[select.name]"
+        :placeholder="select.placeholder"
+        :options="props.selectOptions"
+        :option-attribute="select.optionAttribute"
+      >
+        <template #option="{ option }">
+          <span
+            class="flex-shrink-0 w-2 h-2 mt-px rounded-full"
+            :style="{ background: `#${option.color}` }"
+          />
+          <span class="truncate">{{ option[select.optionAttribute] }}</span>
+        </template>
+        <template #empty>
+          No people
+        </template>
+      </USelectMenu>
+    </UFormGroup>
+    <UFormGroup
       v-for="input in form.schema.input"
       :key="input.id"
       :name="input.name"
@@ -12,14 +40,6 @@
       :required="input.required"
       :hint="input.hint"
     >
-      <USelectMenu
-        v-if="input.select"
-        v-model="state[input.name]"
-        :placeholder="input.placeholder"
-        :options="props.selectOptions"
-        :by="props.selectBy"
-        :option-attribute="input.optionAttribute"
-      />
       <UInput
         v-if="input"
         v-model="state[input.name]"
@@ -64,7 +84,6 @@ const props = defineProps<{
   type: string
   state: object,
   selectOptions?: object[]
-  selectBy?: string
 }>()
 
 const emits = defineEmits<{ close: [value: boolean] }>()
