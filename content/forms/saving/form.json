@@ -50,13 +50,21 @@
     "description": "Create/update saving",
     "type": "object",
     "properties": {
-      "email": {
+      "title": {
         "type": "string",
-        "format": "email",
         "required": true
       },
-      "password": {
-        "type": "string",
+      "totalAmount": {
+        "type": "number",
+        "min": 8,
+        "required": true
+      },
+      "endYear": {
+        "type": "date",
+        "required": true
+      },
+      "currentAmount": {
+        "type": "number",
         "min": 8,
         "required": true
       }

@@ -7,8 +7,11 @@
         "disable": false,
         "name": "category",
         "label": "Category",
+        "optionAttribute": "title",
         "required": true
-      },
+      }
+    ],
+    "input": [
       {
         "type": "number",
         "placeholder": "1000",
@@ -32,13 +35,12 @@
     "description": "Create/update expense",
     "type": "object",
     "properties": {
-      "email": {
+      "category": {
         "type": "string",
-        "format": "email",
         "required": true
       },
-      "password": {
-        "type": "string",
+      "amount": {
+        "type": "number",
         "min": 8,
         "required": true
       }
