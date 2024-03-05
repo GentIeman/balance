@@ -66,7 +66,7 @@
       "currentAmount": {
         "type": "number",
         "min": 8,
-        "required": true
+        "required": false
       }
     }
   },
@@ -76,7 +76,11 @@
         "required": "Required"
       },
       "totalAmount": {
-        "required": "Required"
+        "required": "Required",
+        "min": "Must be at least 8 characters"
+      },
+      "currentTotal": {
+        "min": "Must be at least 8 characters"
       },
       "endYear": {
         "required": "Required",

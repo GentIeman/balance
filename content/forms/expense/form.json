@@ -8,6 +8,9 @@
         "name": "category",
         "label": "Category",
         "optionAttribute": "title",
+        "valueAttribute": "id",
+        "isSearchable": true,
+        "searchPlaceholder": "Наименование категории",
         "required": true
       }
     ],
@@ -36,7 +39,7 @@
     "type": "object",
     "properties": {
       "category": {
-        "type": "string",
+        "type": "object",
         "required": true
       },
       "amount": {
@@ -52,7 +55,8 @@
         "required": "Required"
       },
       "amount": {
-        "required": "Required"
+        "required": "Required",
+        "min": "Must be at least 8 characters"
       }
     }
   }
