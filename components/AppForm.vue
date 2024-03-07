@@ -28,7 +28,7 @@
           <span class="truncate">{{ option[select.optionAttribute] }}</span>
         </template>
         <template #empty>
-          No people
+          No items
         </template>
       </USelectMenu>
     </UFormGroup>
