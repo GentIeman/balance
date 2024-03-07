@@ -1,6 +1,6 @@
 <template>
-  <section class="flex justify-center items-center bg-gray-100 h-screen">
-    <UContainer class="flex flex-col gap-5 lg:px-[100px] sm:px-[50px] py-[50px] w-[500px] m-0 bg-white rounded-[20px]">
+  <UCard class="py-[20px] w-[500px] bg-white rounded-[20px]">
+    <UContainer class="grid gap-5">
       <h2 class="w-full text-2xl text-zinc-800 font-semibold">
         {{ isLogin ? "Welcome back" : "Hello" }}
       </h2>
@@ -9,31 +9,32 @@
         :dir="isLogin ? 'login' : 'register'"
         :state="user"
         :type="isLogin ? 'Sign in' : 'Sign up'"
-        :func="onAuth"
       />
-      <UDivider />
-      <p class="text-gray-600">
-        {{ isLogin ? "Not registered yet?" : "Have you been here before?" }}
-        <UButton
-          @click="isLogin = !isLogin"
-          variant="link"
-          class="sm:px-0"
-        >
-          {{ isLogin ? "Sign up" : "Sign in" }}
-        </UButton>
-      </p>
+      <UContainer class="w-full sm:px-0 lg:px-0 m-0">
+        <UDivider />
+        <p class="text-gray-600">
+          {{ isLogin ? "Not registered yet?" : "Have you been here before?" }}
+          <UButton
+            @click="isLogin = !isLogin"
+            variant="link"
+            class="sm:px-0"
+          >
+            {{ isLogin ? "Sign up" : "Sign in" }}
+          </UButton>
+        </p>
+      </UContainer>
     </UContainer>
-    <UNotification
-      class="absolute top-[90px] bottom-auto max-w-[500px]"
-      color="rose"
-      @close="serverErrorDescription = ''"
-      v-if="serverErrorDescription != null"
-      id="3"
-      :timeout="3000"
-      :description="serverErrorDescription"
-      title="Notification"
-    />
-  </section>
+  </UCard>
+  <UNotification
+    class="absolute top-[90px] bottom-auto max-w-[500px]"
+    color="rose"
+    @close="serverErrorDescription = ''"
+    v-if="serverErrorDescription != null"
+    id="3"
+    :timeout="3000"
+    :description="serverErrorDescription"
+    title="Notification"
+  />
   <AppLoader
     v-if="isLoader"
     size="6rem"
@@ -42,15 +43,15 @@
 </template>
 <script setup lang="ts">
 import AppForm from "~/components/AppForm.vue"
-import {UDivider, UButton, UNotification, UContainer} from "#components"
+import {UDivider, UButton, UNotification, UCard, UContainer} from "#components"
 import AppLoader from "~/components/AppLoader.vue"
 
 const router = useRouter()
 
 const user = reactive<IUser>({
-  email: "",
+  email: "ilya@gmail.com",
   username: undefined,
-  password: "",
+  password: "1234567890",
   salary: undefined,
   pensionYear: undefined
 })
