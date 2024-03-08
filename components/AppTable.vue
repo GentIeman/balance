@@ -20,7 +20,7 @@
   </UTable>
   <UContainer class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
     <UPagination
-      v-if="props.rows.length > 0"
+      v-if="props.rows.length > props.pageCount"
       v-model="page"
       :page-count="pageCount"
       :total="props.rows.length"
