@@ -58,3 +58,5 @@ declare global {
         endDate: string,
     }
 }
+
+export {}
