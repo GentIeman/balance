@@ -19,9 +19,8 @@ declare global {
         id?: number,
         amount: number,
         createdAt: string,
-        categories?: {
+        categories: {
             id: number
-            title: string
         }
     }
 
