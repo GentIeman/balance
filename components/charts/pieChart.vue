@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import {Pie} from "vue-chartjs"
-import type {IChart, IPieChartConfig} from "~/utils/interfaces"
 
 const props = defineProps<{
   data: any[],
