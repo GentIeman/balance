@@ -1,16 +1,20 @@
 <template>
-  <UCard class="py-[20px] w-[500px] bg-white rounded-[20px]">
-    <UContainer class="grid gap-5">
-      <h2 class="w-full text-2xl text-zinc-800 font-semibold">
-        {{ isLogin ? "Welcome back" : "Hello" }}
-      </h2>
+  <UCard class="w-[600px] rounded-md shadow border justify-start items-start">
+    <template #header>
+      <header class="flex place-content-center w-full px-7">
+        <h2 class="w-full text-2xl text-zinc-800 font-semibold">
+          {{ isLogin ? "Welcome back" : "Hello" }}
+        </h2>
+      </header>
+    </template>
+    <UContainer class="grid gap-4">
       <AppForm
         @submit="onAuth($event)"
         :dir="isLogin ? 'login' : 'register'"
         :state="user"
         :type="isLogin ? 'Sign in' : 'Sign up'"
       />
-      <UContainer class="w-full sm:px-0 lg:px-0 m-0">
+      <UContainer class="w-full lg:px-0 sm:px-0">
         <UDivider />
         <p class="text-gray-600">
           {{ isLogin ? "Not registered yet?" : "Have you been here before?" }}
