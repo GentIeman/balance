@@ -5,12 +5,12 @@
         "type": "email",
         "placeholder": "Category",
         "disable": false,
-        "name": "category",
+        "name": "categories",
         "label": "Category",
         "optionAttribute": "title",
         "valueAttribute": "id",
         "isSearchable": true,
-        "searchPlaceholder": "Наименование категории",
+        "searchPlaceholder": "Category",
         "required": true
       }
     ],
@@ -38,8 +38,8 @@
     "description": "Create/update expense",
     "type": "object",
     "properties": {
-      "category": {
-        "type": "object",
+      "categories": {
+        "type": "string",
         "required": true
       },
       "amount": {
@@ -51,7 +51,7 @@
   },
   "config": {
     "errMessages": {
-      "category": {
+      "categories": {
         "required": "Required"
       },
       "amount": {
