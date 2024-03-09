@@ -19,6 +19,7 @@
         :placeholder="select.placeholder"
         :options="props.selectOptions"
         :option-attribute="select.optionAttribute"
+        :value-attribute="select.valueAttribute"
       >
         <template #option="{ option }">
           <span
