@@ -51,14 +51,29 @@
     ]
   },
   "rules": {
-    "title": "Sign in",
-    "description": "Sign in",
+    "title": "Sign up",
+    "description": "Sign up",
     "type": "object",
     "properties": {
       "email": {
         "type": "string",
         "format": "email",
+        "min": 3,
         "required": true
+      },
+      "username": {
+        "type": "string",
+        "required": true,
+        "min": 5
+      },
+      "salary": {
+        "type": "number",
+        "moreThan": 99,
+        "lessThan": 10000000,
+        "required": true
+      },
+      "pensionYear": {
+        "type": "date"
       },
       "password": {
         "type": "string",
@@ -72,6 +87,15 @@
       "email": {
         "required": "Required",
         "min": "Must be at least 3 characters"
+      },
+      "username": {
+        "required": "Required",
+        "min": "Must be at least 5 characters"
+      },
+      "salary": {
+        "required": "Required",
+        "moreThan": "Minimum 100",
+        "lessThan": "Maximum 9999999"
       },
       "password": {
         "min": "Must be at least 8 characters",
