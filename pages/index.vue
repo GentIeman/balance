@@ -128,6 +128,7 @@ const {
   expenses,
   getExpensesCount,
   getCategoryStatus,
+  getCategoriesCount,
   getTotalExpensesByCategory
 } = storeToRefs(expenseStore)
 
