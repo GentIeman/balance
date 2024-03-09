@@ -2,7 +2,7 @@
   "schema": {
     "select": [
       {
-        "type": "email",
+        "type": "text",
         "placeholder": "Category",
         "disable": false,
         "name": "categories",
@@ -22,9 +22,7 @@
         "require": true,
         "name": "amount",
         "required": true,
-        "label": "Amount",
-        "min": 1,
-        "max": 999999
+        "label": "Amount"
       }
     ],
     "button": [
@@ -44,7 +42,8 @@
       },
       "amount": {
         "type": "number",
-        "min": 8,
+        "moreThan": 9,
+        "lessThan": 1000000,
         "required": true
       }
     }
@@ -56,7 +55,8 @@
       },
       "amount": {
         "required": "Required",
-        "min": "Must be at least 8 characters"
+        "moreThan": "Minimum 10",
+        "lessThan": "Maximum 999999"
       }
     }
   }
