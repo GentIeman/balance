@@ -32,8 +32,8 @@
   <UNotification
     class="absolute top-[90px] bottom-auto max-w-[500px]"
     color="rose"
-    @close="serverErrorDescription = ''"
-    v-if="serverErrorDescription != null"
+    @close="isNotification = false"
+    v-if="isNotification"
     id="3"
     :timeout="3000"
     :description="serverErrorDescription"
@@ -62,6 +62,7 @@ const user = reactive<IUser>({
 
 const isLoader = ref<boolean>(false)
 const isLogin = ref<boolean>(true)
+const isNotification = ref<boolean>(false)
 
 const serverErrorDescription = ref<string | null>(null)
 
@@ -86,6 +87,7 @@ const onAuth = async (event: IUser) => {
     await router.push("/")
 
   } catch (err: any) {
+    isNotification.value = true
     serverErrorDescription.value = err.error.message
   }
 }
