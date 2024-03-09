@@ -94,5 +94,5 @@ const isShowPassword = ref<boolean>(false)
 const forms = await queryContent("forms").find()
 const form = computed(() => forms.find((form) => form._dir === dirLowerCase.value))
 
-const yupSchema = buildYup(form.value?.rules, form.value?.config as object)
+const yupSchema = computed(() => buildYup(form.value?.rules, form.value?.config as object))
 </script>
