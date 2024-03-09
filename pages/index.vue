@@ -88,7 +88,7 @@
         </template>
         <UContainer class="grid place-items-center h-full w-full">
           <PieChart
-            :data="getTotalExpensesByCategory()"
+            :data="getCategoriesByExpense"
             :config="pieChartConfig"
             :options="{maintainAspectRatio: false}"
           />
@@ -129,7 +129,7 @@ const {
   getExpensesCount,
   getCategoryStatus,
   getCategoriesCount,
-  getTotalExpensesByCategory
+  getCategoriesByExpense
 } = storeToRefs(expenseStore)
 
 const {
