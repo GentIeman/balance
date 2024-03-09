@@ -87,8 +87,6 @@ const props = defineProps<{
   selectOptions?: object[]
 }>()
 
-const emits = defineEmits<{ close: [value: boolean] }>()
-
 const dirLowerCase = computed(() => props.dir.toLowerCase())
 const state = computed(() => props.state)
 const isShowPassword = ref<boolean>(false)
