@@ -47,6 +47,8 @@
         :type="input.type === 'password' && isShowPassword ? 'text' : input.type"
         @input="$event.target.value = $event.target.value == '' && input.type == 'number' ? 1 : $event.target.value "
         :placeholder="input.placeholder"
+        :min="input.type == 'date' ? new Date().toISOString().split('T')[0] : ''"
+        :max="input.type == 'date' ? new Date(new Date().setFullYear(new Date().getFullYear() + 60)).toISOString().split('T')[0] : ''"
         :ui="{ icon: { trailing: { pointer: '' } } }"
       >
         <template

@@ -26,7 +26,7 @@
         "required": true
       },
       {
-        "type": "number",
+        "type": "date",
         "placeholder": "Pension year",
         "disable": false,
         "name": "pensionYear",
