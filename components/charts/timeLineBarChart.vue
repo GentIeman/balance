@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import {Bar} from "vue-chartjs"
-import type {IChart, IBarChartConfig} from "~/utils/interfaces"
 
 const props = defineProps<{
   data: any[],
@@ -52,7 +51,7 @@ const generateBarChartByTimeLine = (payload: { [key: string]: any }[], config: I
   }
 }
 
-const chartData = computed(() => generateBarChartByTimeLine(props.data, props.config, props.interval))
+const chartData = computed(() => generateBarChartByTimeLine(props.data, props.config))
 const chartOptions = computed(() => props.options)
 
 </script>
