@@ -44,8 +44,8 @@
       <UInput
         v-if="input"
         v-model="state[input.name]"
-        @input="$event.target.value = input.type == 'number' ? Math.max(input.min, Math.min(input.max, $event.target.value)) : $event.target.value"
         :type="input.type === 'password' && isShowPassword ? 'text' : input.type"
+        @input="$event.target.value = $event.target.value == '' && input.type == 'number' ? 1 : $event.target.value "
         :placeholder="input.placeholder"
         :ui="{ icon: { trailing: { pointer: '' } } }"
       >
