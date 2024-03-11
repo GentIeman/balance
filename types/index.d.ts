@@ -9,10 +9,17 @@ declare global {
     }
 
     interface ICategory {
-        id?: number,
+        id: number,
         title: string,
-        budgetLimit: number,
-        totalExpenses?: number
+        color: string,
+        limit?: number
+    }
+
+    interface ICategoryLimit {
+        limit: number,
+        category: {
+            id: number
+        }
     }
 
     interface IExpense {
