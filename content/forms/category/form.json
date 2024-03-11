@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "select": [
+      {
+        "type": "number",
+        "placeholder": "Category",
+        "disable": false,
+        "name": "category",
+        "label": "Category",
+        "optionAttribute": "title",
+        "valueAttribute": "id",
+        "isSearchable": true,
+        "searchPlaceholder": "Category",
+        "required": true
+      }
+    ],
+    "input": [
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "require": true,
+        "name": "limit",
+        "required": true,
+        "label": "Limit"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Category",
+    "description": "Set category limit",
+    "type": "object",
+    "properties": {
+      "category": {
+        "type": "number",
+        "required": true
+      },
+      "limit": {
+        "type": "number",
+        "moreThan": 9,
+        "lessThan": 1000000,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "category": {
+        "required": "Required"
+      },
+      "limit": {
+        "required": "Required",
+        "moreThan": "Minimum 10",
+        "lessThan": "Maximum 999999"
+      }
+    }
+  }
+}
