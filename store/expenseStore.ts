@@ -1,36 +1,25 @@
 import {defineStore} from "pinia"
-import type {ICategory, IExpense, IUser} from "~/utils/interfaces"
-import {useCategoryStore} from "~/store/categoryStore"
 
-interface IExpenseState {
-    expenses: IExpense[]
+interface IBalanceState {
+    categories: ICategory[]
+    expenses: IExpense[],
 }
 
 export const useExpenseStore = defineStore("expenseStore", {
-    state: (): IExpenseState => ({
-        expenses: []
+    state: (): IBalanceState => ({
+        categories: [],
+        expenses: [],
     }),
     getters: {
-        getExpensesCount: (state: IExpenseState) => state.expenses.length,
-        getExpenseById: (state: IExpenseState) => (id: number) => {
+        expenseList: (state: IBalanceState) => state.expenses,
+        getExpensesCount: (state: IBalanceState) => state.expenses.length,
+        getExpenseById: (state: IBalanceState) => (id: number) => {
             return state.expenses.find((expense: IExpense): boolean => expense.id == id)
-        },
-        getTotalCategoryExpenses: (state: IExpenseState) => (id?: number) => {
-            const categoryStore = useCategoryStore()
-            const {categories, getCategoryById} = categoryStore
-
-            const foundCategory: ICategory | undefined = getCategoryById(id)
-
-            return categories.map((category: ICategory): object => ({
-                categoryTitle: foundCategory ? foundCategory.title : category.title,
-                totalExpenses: state.expenses.reduce((acc: number, expense: IExpense): number => {
-                    return expense.categories?.id === category.id ? acc + expense.amount : acc
-                }, 0)
-            }))
         }
     },
     actions: {
         async fetchUserExpenses(): Promise<void> {
+            this.expenses = []
             const {findOne} = useStrapi()
             const user = useStrapiUser<IUser>()
 
@@ -47,41 +36,27 @@ export const useExpenseStore = defineStore("expenseStore", {
                 })
                 this.expenses = expenses
             } catch (error) {
-                console.error("Error fetching user categories:", error)
+                console.error("Error fetching user expenses:", error)
             }
         },
-        async initExpense(expense: IExpense): Promise<void> {
-            const {create, update} = useStrapi()
-            const user = useStrapiUser<IUser>()
-            const {data: initializedExpense} = await (
-                expense.id == undefined
-                    ? create("expenses", {...expense, user: user.value.id})
-                    : update("expenses", expense.id, {...expense})
-            )
-            const existingExpenseIndex: number = this.expenses.findIndex((existingExpense: IExpense): boolean => existingExpense.id === initializedExpense.attributes.id)
-
-            existingExpenseIndex === -1
-                ? this.expenses.push(initializedExpense.attributes)
-                : (this.expenses[existingExpenseIndex] = initializedExpense.attributes)
-        },
-        async initItem<T extends { id: number }>(payload: T, contentType: string): Promise<void> {
+        async initItem<T extends { id: number, data: object }>(payload: T, contentType: string, storeArrayName?: string): Promise<void> {
             const {create, update} = useStrapi()
             const user = useStrapiUser<IUser>()
             const {data: initializedItem} = await (
                 payload.id == undefined
-                    ? create(contentType, {...payload, user: user.value.id})
-                    : update(contentType, payload.id, {...payload})
+                    ? create(contentType, {...payload.data, user: user.value.id})
+                    : update(contentType, payload.id, {...payload.data})
             )
 
-            const targetArray = (this as any)[contentType]
-            
-            const existingItemIndex: number = targetArray.findIndex(
+            const storeArray = (this as any)[contentType ?? storeArrayName]
+
+            const existingItemIndex: number = storeArray.findIndex(
                 (existingItem: T): boolean => existingItem.id === initializedItem.attributes.id
             )
 
             existingItemIndex === -1
-                ? targetArray.push(initializedItem.attributes)
-                : targetArray[existingItemIndex] = initializedItem.attributes
+                ? storeArray.push(initializedItem.attributes)
+                : storeArray[existingItemIndex] = initializedItem.attributes
         },
         async deleteItem<T extends { id: number }>(payload: T, contentType: string) {
             const {delete: _delete} = useStrapi()
@@ -89,11 +64,6 @@ export const useExpenseStore = defineStore("expenseStore", {
 
             await _delete(contentType, payload.id)
             targetArray.splice(targetArray.findIndex((findItem: T): boolean => findItem.id === payload.id), 1)
-        },
-        async deleteExpense(expense: IExpense): Promise<void> {
-            const {delete: _delete} = useStrapi()
-            await _delete("categories", expense.id)
-            this.expenses.splice(this.expenses.findIndex((findExpense: IExpense): boolean => findExpense.id === expense.id), 1)
-        },
+        }
     }
 })
