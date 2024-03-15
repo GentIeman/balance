@@ -12,11 +12,12 @@ declare global {
         id: number,
         title: string,
         color: string,
-        limit?: number
+        limit?: number | null
     }
 
     interface ICategoryLimit {
-        limit: number,
+        id?: number,
+        limit: number | null,
         category: {
             id: number
         }
