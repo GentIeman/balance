@@ -18,18 +18,13 @@ declare global {
     interface ICategoryLimit {
         id?: number,
         limit: number | null,
-        category: {
-            id: number
-        }
+        category: number
     }
 
     interface IExpense {
         id?: number,
         amount: number,
-        createdAt: string,
-        categories: {
-            id: number
-        }
+        categories: number
     }
 
     interface IChart {

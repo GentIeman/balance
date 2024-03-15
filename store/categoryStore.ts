@@ -17,14 +17,14 @@ export const useCategoryStore = defineStore("categoryStore", {
         categoryList: (state: ICategoryState) => state.categories,
         categoriesCount: (state: ICategoryState) => state.categories.length,
         categoryLimitById: (state: ICategoryState) => (id: number): number | null => {
-            const limit = state.userCategoryLimits.find((item: ICategoryLimit): boolean => item.category.id === id)?.limit
+            const limit = state.userCategoryLimits.find((item: ICategoryLimit): boolean => item.category === id)?.limit
             return limit && limit > 0 ? limit : null
         },
         categoryTotalExpenseById: () => (id: number): number => {
             const {expenseList} = useExpenseStore()
 
             return expenseList
-                .filter((expense: IExpense): boolean => expense.categories.id === id)
+                .filter((expense: IExpense): boolean => expense.categories === id)
                 .reduce((total: number, expense: IExpense) => total + expense.amount, 0)
         },
         categoryByExpense(state: ICategoryState): ICategory[] {
@@ -35,7 +35,7 @@ export const useCategoryStore = defineStore("categoryStore", {
                 const totalExpenses: number = this.categoryTotalExpenseById(category.id)
                 return {...category, limit, totalExpenses}
             }).filter((category: ICategory) => {
-                return expenseList.some((expense: IExpense): boolean => expense.categories.id === category.id)
+                return expenseList.some((expense: IExpense): boolean => expense.categories === category.id)
             })
         },
         categoryById: (state: ICategoryState) => (id: number): ICategory | undefined => {
@@ -45,7 +45,7 @@ export const useCategoryStore = defineStore("categoryStore", {
             const {expenseList} = useExpenseStore()
             return expenseList.map((expense) => {
                 const category: ICategory | undefined = state.categories.find(
-                    (category: ICategory): boolean => expense.categories?.id === category.id
+                    (category: ICategory): boolean => expense.categories === category.id
                 )
                 return {...expense, category: category?.title || "Unknown"}
             })
@@ -78,7 +78,8 @@ export const useCategoryStore = defineStore("categoryStore", {
             const user = useStrapiUser<IUser>()
 
             try {
-                const response: Strapi4ResponseData<ICategoryLimit> = await findOne("users", user.value.id, {
+                // @ts-ignore
+                const {category_limits} = await findOne("users", user.value.id, {
                     populate: {
                         category_limits: {
                             fields: ["limit"],
@@ -89,17 +90,19 @@ export const useCategoryStore = defineStore("categoryStore", {
                     }
                 })
 
-                this.userCategoryLimits = response.category_limits
+                for (const limit of category_limits) {
+                    this.userCategoryLimits.push({...limit, category: limit.category.id})
+                }
             } catch (error) {
                 console.error("Error fetching user limits:", error)
             }
         },
-        async setLimit(payload: { data: {category: number, limit: number} }): Promise<void> {
+        async setLimit(payload: ICategoryLimit ): Promise<void> {
             const {create, update} = useStrapi()
             const user = useStrapiUser<IUser>()
 
             const existingLimitIndex: number = this.userCategoryLimits.findIndex(
-                (limit: ICategoryLimit): boolean => limit.category.id === payload.data.category
+                (limit: ICategoryLimit): boolean => limit.category === payload.category
             )
 
             const existingLimit: ICategoryLimit | undefined = this.userCategoryLimits[existingLimitIndex]
@@ -107,13 +110,13 @@ export const useCategoryStore = defineStore("categoryStore", {
             try {
                 const {data: initializedLimit} = await (
                     existingLimit?.id == undefined
-                        ? create("category-limits", {...payload.data, user: user.value.id})
-                        : update("category-limits", existingLimit.id, {...payload.data})
+                        ? create("category-limits", {...payload, user: user.value.id})
+                        : update("category-limits", existingLimit.id, {...payload})
                 )
 
                 existingLimitIndex === -1
-                    ? this.userCategoryLimits.push({...initializedLimit.attributes, category: {id: payload.data.category} })
-                    : this.userCategoryLimits[existingLimitIndex] = {...initializedLimit.attributes, category: {id: payload.data.category}}
+                    ? this.userCategoryLimits.push({...initializedLimit.attributes, category: payload.category })
+                    : this.userCategoryLimits[existingLimitIndex] = {...initializedLimit.attributes, category: payload.category}
             } catch (error) {
                 console.error("Error set limit:", error)
             }
