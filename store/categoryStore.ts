@@ -16,8 +16,9 @@ export const useCategoryStore = defineStore("categoryStore", {
     getters: {
         categoryList: (state: ICategoryState) => state.categories,
         categoriesCount: (state: ICategoryState) => state.categories.length,
-        categoryLimitById: (state: ICategoryState) => (id: number): number | undefined => {
-            return state.userCategoryLimits.find((item: ICategoryLimit): boolean => item.category.id === id)?.limit
+        categoryLimitById: (state: ICategoryState) => (id: number): number | null => {
+            const limit = state.userCategoryLimits.find((item: ICategoryLimit): boolean => item.category.id === id)?.limit
+            return limit && limit > 0 ? limit : null
         },
         categoryTotalExpenseById: () => (id: number): number => {
             const {expenseList} = useExpenseStore()
@@ -30,7 +31,7 @@ export const useCategoryStore = defineStore("categoryStore", {
             const {expenseList} = useExpenseStore()
 
             return state.categories.map((category: ICategory) => {
-                const limit: number | undefined = this.categoryLimitById(category.id)
+                const limit: number | null = this.categoryLimitById(category.id)
                 const totalExpenses: number = this.categoryTotalExpenseById(category.id)
                 return {...category, limit, totalExpenses}
             }).filter((category: ICategory) => {
