@@ -94,22 +94,29 @@ export const useCategoryStore = defineStore("categoryStore", {
                 console.error("Error fetching user limits:", error)
             }
         },
-        async setLimit(payload: { data: ICategory }): Promise<void> {
-            const category: ICategory = payload.data
+        async setLimit(payload: { data: {category: number, limit: number} }): Promise<void> {
             const {create, update} = useStrapi()
             const user = useStrapiUser<IUser>()
-            const {data: initializedCategory} = await (
-                category.id == undefined
-                    ? create("category-limits", {...category, user: user.value.id})
-                    : update("category-limits", category.id, {...category})
-            )
-            const existingCategoryIndex: number = this.categories.findIndex(
-                (existingCategory: ICategory): boolean => existingCategory.id === initializedCategory.attributes.id
+
+            const existingLimitIndex: number = this.userCategoryLimits.findIndex(
+                (limit: ICategoryLimit): boolean => limit.category.id === payload.data.category
             )
 
-            existingCategoryIndex === -1
-                ? this.categories.push(initializedCategory.attributes)
-                : this.categories[existingCategoryIndex] = initializedCategory.attributes
+            const existingLimit: ICategoryLimit | undefined = this.userCategoryLimits[existingLimitIndex]
+
+            try {
+                const {data: initializedLimit} = await (
+                    existingLimit?.id == undefined
+                        ? create("category-limits", {...payload.data, user: user.value.id})
+                        : update("category-limits", existingLimit.id, {...payload.data})
+                )
+
+                existingLimitIndex === -1
+                    ? this.userCategoryLimits.push({...initializedLimit.attributes, category: {id: payload.data.category} })
+                    : this.userCategoryLimits[existingLimitIndex] = {...initializedLimit.attributes, category: {id: payload.data.category}}
+            } catch (error) {
+                console.error("Error set limit:", error)
+            }
         }
     }
 })
