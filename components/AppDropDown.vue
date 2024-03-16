@@ -25,12 +25,12 @@ const actions = (item: object) => {
     {
       label: 'Edit',
       icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => emits("click", item)
+      click: () => emits("click", {data: item, type: 'edit'})
     },
     {
       label: 'Delete',
       icon: 'i-heroicons-trash-20-solid',
-      click: () => emits("click", item)
+      click: () => emits("click", {data: item, type: 'delete'})
     },
     {
       label: 'Clear limit',
