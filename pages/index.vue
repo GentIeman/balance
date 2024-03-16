@@ -94,7 +94,36 @@
         </UContainer>
       </UCard>
     </UContainer>
-    <UContainer class="grid gap-10 w-full sm:p-0 lg:p-0">
+    <UContainer class="grid grid-cols-3 auto-rows-max gap-10 w-full sm:p-0 lg:p-0">
+      <UCard
+        class="col-span-1 max-h-[450px]"
+      >
+        <template #header>
+          <header class="flex items-center justify-between">
+            <h3 class="text-zinc-800 text-lg font-semibold">
+              Top 3 savings
+            </h3>
+          </header>
+        </template>
+        <ul class="flex flex-col gap-10">
+          <li
+            class="w-full"
+            v-for="saving in topThreeSavings"
+            :key="saving.id"
+          >
+            <p class="text-cyan-950 text-lg font-semibold">
+              {{ saving.title }}
+            </p>
+            <UProgress
+              indicator
+              :value="calcProgress(saving.currentAmount, saving.totalAmount)"
+            />
+            <p class="text-black text-opacity-80 text-xs font-normal">
+              {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
+            </p>
+          </li>
+        </ul>
+      </UCard>
       <UCard
         v-if="expensesCount > 0"
         class="grid col-span-2 bg-white"
