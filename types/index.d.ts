@@ -56,10 +56,12 @@ declare global {
     }
 
     interface ISaving {
+        id?: number
         title: string,
         totalAmount: number,
         currentAmount: number,
         endDate: string,
+        user?: number
     }
 }
 
