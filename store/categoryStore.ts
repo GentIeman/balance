@@ -1,6 +1,6 @@
 import {defineStore} from "pinia"
 // @ts-ignore
-import type {Strapi4ResponseData, Strapi4ResponseMany} from "@nuxtjs/strapi/dist/runtime/types"
+import type {Strapi4ResponseMany} from "@nuxtjs/strapi/dist/runtime/types"
 import {useExpenseStore} from "~/store/expenseStore"
 
 interface ICategoryState {
@@ -49,13 +49,6 @@ export const useCategoryStore = defineStore("categoryStore", {
                 )
                 return {...expense, category: category?.title || "Unknown"}
             })
-        },
-        categoryStatus(state: ICategoryState): object {
-            return state.categories
-                .map((category: ICategory) => ({
-                    ...category,
-                    status: (this.categoryTotalExpenseById(category.id) || 0) > (this.categoryLimitById(category.id) ?? 0) ? "Warn" : "Good"
-                }))
         }
     },
     actions: {
