@@ -10,7 +10,14 @@ export const useSavingStore = defineStore("savingStore", {
     }),
     getters: {
         savingList: (state: ISavingStore) => state.savings,
-        savingCount: (state: ISavingStore) => state.savings.length
+        savingCount: (state: ISavingStore) => state.savings.length,
+        sortedSavingsByPercent: (state) => {
+            const sortedSavings = [...state.savings]
+
+            return sortedSavings.sort(
+                (a, b) => Math.abs(b.currentAmount - a.totalAmount) - Math.abs(a.currentAmount - b.totalAmount)
+            )
+        }
     },
     actions: {
         async fetchUserSavings(): Promise<void> {
