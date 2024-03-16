@@ -1,16 +1,18 @@
 <template>
-  <div>
-    <h1>My Nuxt Application</h1>
-    data from DB:
-    <ul>
-      <li>Username: {{ client.data[0].attributes["username"] }}</li>
-      <li>Email: {{ client.data[0].attributes["email"] }}</li>
-    </ul>
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
-<script lang="ts" setup>
-const {find} = useStrapi()
-
-const client = await find("clients", {fields: ["email", "username"]})
+<script setup lang="ts">
+import {NuxtPage, NuxtLayout} from "#components"
 </script>
+
+<style>
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+</style>

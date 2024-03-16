@@ -1,0 +1,106 @@
+{
+  "schema": {
+    "input": [
+      {
+        "type": "email",
+        "placeholder": "you@example.com",
+        "disable": false,
+        "name": "email",
+        "label": "Your email",
+        "required": true
+      },
+      {
+        "type": "text",
+        "placeholder": "Username",
+        "disable": false,
+        "name": "username",
+        "label": "Username",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "name": "salary",
+        "label": "Salary",
+        "required": true
+      },
+      {
+        "type": "date",
+        "placeholder": "Pension year",
+        "disable": false,
+        "name": "pensionYear",
+        "label": "Pension year",
+        "required": false,
+        "hint": "Optional"
+      },
+      {
+        "type": "password",
+        "placeholder": "***",
+        "disable": false,
+        "require": true,
+        "name": "password",
+        "required": true,
+        "label": "Password"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Sign up",
+    "description": "Sign up",
+    "type": "object",
+    "properties": {
+      "email": {
+        "type": "string",
+        "format": "email",
+        "min": 3,
+        "required": true
+      },
+      "username": {
+        "type": "string",
+        "required": true,
+        "min": 5
+      },
+      "salary": {
+        "type": "number",
+        "moreThan": 99,
+        "lessThan": 10000000,
+        "required": true
+      },
+      "pensionYear": {
+        "type": "date"
+      },
+      "password": {
+        "type": "string",
+        "min": 8,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "email": {
+        "required": "Required",
+        "min": "Must be at least 3 characters"
+      },
+      "username": {
+        "required": "Required",
+        "min": "Must be at least 5 characters"
+      },
+      "salary": {
+        "required": "Required",
+        "moreThan": "Minimum 100",
+        "lessThan": "Maximum 9999999"
+      },
+      "password": {
+        "min": "Must be at least 8 characters",
+        "required": "Required"
+      }
+    }
+  }
+}

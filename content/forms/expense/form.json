@@ -1,0 +1,63 @@
+{
+  "schema": {
+    "select": [
+      {
+        "type": "text",
+        "placeholder": "Category",
+        "disable": false,
+        "name": "categories",
+        "label": "Category",
+        "optionAttribute": "title",
+        "valueAttribute": "id",
+        "isSearchable": true,
+        "searchPlaceholder": "Category",
+        "required": true
+      }
+    ],
+    "input": [
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "require": true,
+        "name": "amount",
+        "required": true,
+        "label": "Amount"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Expense",
+    "description": "Create/update expense",
+    "type": "object",
+    "properties": {
+      "categories": {
+        "type": "string",
+        "required": true
+      },
+      "amount": {
+        "type": "number",
+        "moreThan": 9,
+        "lessThan": 1000000,
+        "required": true
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "categories": {
+        "required": "Required"
+      },
+      "amount": {
+        "required": "Required",
+        "moreThan": "Minimum 10",
+        "lessThan": "Maximum 999999"
+      }
+    }
+  }
+}
