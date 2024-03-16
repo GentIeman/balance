@@ -58,7 +58,6 @@
 
 <script setup lang="ts">
 import {AppLogo as Logo, UButton, ULink} from "#components"
-import type {IUser} from "~/utils/interfaces"
 
 const user = useStrapiUser<IUser>()
 const router = useRouter()
