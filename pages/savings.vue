@@ -1,59 +1,47 @@
 <template>
-  <AppHeader
-    title="Savings"
-    subtitle="Set goals for the future"
-  />
   <UContainer class="flex w-full h-100 sm:p-5 bg-white rounded-2xl shadow justify-between items-center">
     <p class="text-zinc-800 text-3em font-normal leading-none">
-      Set new goals for yourself, to do this, click
+      Set new saving for yourself, to do this, click
     </p>
     <UButton
       icon="i-heroicons-plus"
       size="sm"
-      @click="isShowGoalForm = true"
+      @click="showSavingForm({})"
     >
-      Add goal
+      New saving
     </UButton>
   </UContainer>
-  <div
-    v-if="savings.length > 0"
-    class="grid gap-5"
-  >
+  <div class="grid gap-5">
     <div class="responsive-grid">
       <UCard
         class="w-full"
-        v-for="saving in sortedSavings"
-        :key="saving.id"
+        v-for="item in savingList"
+        :key="item.id"
       >
         <template #header>
           <header class="flex items-center justify-between">
             <p class="text-zinc-800 text-lg font-semibold leading-tight">
-              {{ saving.title }}
+              {{ item.title }}
               <UIcon
-                v-if="saving.currentAmount >= saving.totalAmount"
+                v-if="item.item >= item.totalAmount"
                 name="i-heroicons-check-badge-solid"
                 class="text-green-600 text-lg"
               />
             </p>
-            <UDropdown
-              :items="actions(saving)"
-              :popper="{placement: 'bottom-end'}"
-            >
-              <UButton
-                color="gray"
-                variant="solid"
-                icon="i-heroicons-ellipsis-horizontal-20-solid"
-              />
-            </UDropdown>
+            <AppDropDown
+              :action-labels="['edit', 'delete']"
+              :items="item"
+              @click="handleExpenseEvent($event)"
+            />
           </header>
         </template>
         <div class="flex flex-col items-end gap-2">
           <UProgress
             indicator
-            :value="calcProgress(saving.currentAmount, saving.totalAmount)"
+            :value="calcProgress(item.currentAmount, item.totalAmount)"
           />
           <p class="text-black text-opacity-80 text-xs font-normal">
-            {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
+            {{ item.currentAmount ?? 0 }} / {{ item.totalAmount }}
           </p>
         </div>
         <ul class="flex flex-col gap-2">
@@ -61,7 +49,7 @@
             Details
           </li>
           <li class="text-black text-sm font-normal">
-            End date: <time>{{ new Date(saving.endDate).toLocaleDateString() }}</time>
+            End date: <time>{{ new Date(item.endDate).toLocaleDateString() }}</time>
           </li>
         </ul>
       </UCard>
@@ -69,143 +57,99 @@
     <UPagination
       class="justify-end"
       v-model="page"
-      :page-count="pageCount"
+      :page-count="5"
       :total="sortedSavings.length"
     />
   </div>
   <UModal
-    prevent-close
-    v-model="isShowGoalForm"
+    @submit.capture="isShowSavingForm = false"
+    v-model="isShowSavingForm"
   >
     <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
       <template #header>
         <div class="flex items-center justify-between">
           <h3 class="text-base font-semibold leading-6 text-gray-900">
-            {{ goal.id ? "Edit" : "Create" }} goal
+            {{ saving.id ? "Edit" : "Create" }} saving
           </h3>
           <UButton
             color="gray"
             variant="ghost"
             icon="i-heroicons-x-mark-20-solid"
             class="-my-1"
-            @click="closeGoalForm"
+            @click="isShowSavingForm = false"
           />
         </div>
       </template>
-      <goalForm
-        :user-salary="user.salary"
-        :goal="goal"
-        @close-modal="closeGoalForm"
+      <AppForm
+        @submit="initSaving($event.data)"
+        dir="saving"
+        :state="saving"
+        :type="saving.id ? 'Edit' : 'Create'"
       />
     </UCard>
   </UModal>
   <UModal
-    prevent-close
-    v-model="isShowDeleteGoalForm"
+    @submit.capture="isShowDeleteSavingForm = false"
+    v-model="isShowDeleteSavingForm"
   >
-    <DeleteGoal
-      @close-modal="closeDeleteGoalForm"
-      :goal="goal"
-    />
+    <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+            Delete saving
+          </h3>
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark-20-solid"
+            class="-my-1"
+            @click="isShowDeleteSavingForm = false"
+          />
+        </div>
+      </template>
+      <AppDeleteForm
+        item="saving"
+        @close="isShowDeleteSavingForm = $event"
+        @submit="deleteSaving(saving)"
+      />
+    </UCard>
   </UModal>
-  <UCard v-if="savings.length > 0">
-    <template #header>
-      <h3 class="text-lg font-semibold leading-6 text-gray-900">
-        Moving towards the {{ savings.length > 1 ? "targets" : "target" }}
-      </h3>
-    </template>
-    <Line
-      :data="targetChartData"
-      :options="targetChartOptions"
-    />
-  </UCard>
 </template>
 
 <script setup lang="ts">
-import {UContainer, UButton, UCard, UDropdown, UProgress, UModal, UIcon, UPagination} from "#components"
-import AppHeader from "~/components/AppHeader.vue"
-import {useBalanceStore} from "~/store/balanceStore"
-import {useAuthStore} from "~/store/authStore"
-import GoalForm from "~/components/forms/goalForm.vue"
-import {calcProgress} from "~/utils/tools"
-import DeleteGoal from "~/components/forms/deleteGoal.vue"
-import {generateLineChart} from "~/utils/chartUtils"
-import type {IGoal} from "~/utils/interfaces"
-import {Line} from "vue-chartjs"
-const balanceStore = useBalanceStore()
-const authStore = useAuthStore()
-const user = authStore.user
+import {UContainer, UButton, UCard, UProgress, UModal, UIcon, UPagination} from "#components"
+import AppDropDown from "~/components/AppDropDown.vue"
+import {useSavingStore} from "~/store/savingStore"
+import calcProgress from "~/utils/calcProgress"
+import AppDeleteForm from "~/components/AppDeleteForm.vue"
+import AppForm from "~/components/AppForm.vue"
 
-const goal = ref<object>({})
+const savingStore = useSavingStore()
+const {fetchUserSavings, deleteSaving, initSaving} = savingStore
+const {savingList} = storeToRefs(savingStore)
+const sortedSavings = computed(() => savingList.value.slice((page.value - 1) * 5, (page.value) * 5))
+
+const saving = ref<ISaving | object>({})
 const page = ref(1)
-const pageCount = ref(6)
-const sortedSavings = computed(() => balanceStore.getSortedSavingsByPercent.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value))
-const savings = computed(() => balanceStore.getSavings)
-const isShowGoalForm = ref<boolean>(false)
-const isShowDeleteGoalForm = ref<boolean>(false)
+const isShowSavingForm = ref<boolean>(false)
+const isShowDeleteSavingForm = ref<boolean>(false)
 
-const showGoalForm = (item: object) => {
-  goal.value = item
-  isShowGoalForm.value = true
+const showSavingForm = (item: object) => {
+  saving.value = item
+  isShowSavingForm.value = true
 }
 
-const closeGoalForm = () => {
-  goal.value = {}
-  isShowGoalForm.value = false
+const handleExpenseEvent = (event: {data: object, type: string}) => {
+  saving.value = event.data
+  if (event.type == 'edit') {
+    isShowSavingForm.value = true
+  } else {
+    isShowDeleteSavingForm.value = true
+  }
 }
-
-const showDeleteGoalForm = (item: object) => {
-  goal.value = item
-  isShowDeleteGoalForm.value = true
-}
-
-const closeDeleteGoalForm = () => {
-  goal.value = {}
-  isShowDeleteGoalForm.value = false
-}
-
-const actions = (item: object) => [
-  [{
-    label: 'Edit',
-    icon: 'i-heroicons-pencil-square-20-solid',
-    click: () => showGoalForm(item)
-  },
-    {
-      label: 'Delete',
-      icon: 'i-heroicons-trash-20-solid',
-      click: () => showDeleteGoalForm(item)
-    }]
-]
-
-const targetChartData = computed(() => {
-  const chartData = generateLineChart(savings.value, "title", "savingHistories", "transactionAmount", "circle", 5)
-  return {datasets: chartData.datasets, labels: chartData.labels, annotations: chartData.annotations}
-})
-const targetChartOptions = computed(() => ({
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        annotation: {
-          annotations: targetChartData.value.annotations
-        },
-        zoom: {
-          zoom: {
-            wheel: {
-              enabled: true,
-            },
-            mode: 'y',
-          },
-          limits: {
-            y: {min: 0, max: Math.max(...savings.value.map((item: IGoal) => item.totalAmount))},
-          },
-        }
-      }
-    })
-)
 
 onBeforeMount(async () => {
-  if (balanceStore.savings.length == 0) await balanceStore.fetchUserSavings(user.id)
-  if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
+  await fetchUserSavings()
 })
 
 definePageMeta({
