@@ -24,7 +24,8 @@ declare global {
     interface IExpense {
         id?: number,
         amount: number,
-        categories: number
+        categories: number,
+        user: number
     }
 
     interface IChart {
