@@ -33,7 +33,12 @@ export const useCategoryStore = defineStore("categoryStore", {
             return state.categories.map((category: ICategory) => {
                 const limit: number | null = this.categoryLimitById(category.id)
                 const totalExpenses: number = this.categoryTotalExpenseById(category.id)
-                return {...category, limit, totalExpenses}
+                return {
+                    ...category,
+                    limit,
+                    totalExpenses,
+                    status: (totalExpenses || 0) > (limit ?? 0) ? "Warn" : "Good"
+                }
             }).filter((category: ICategory) => {
                 return expenseList.some((expense: IExpense): boolean => expense.categories === category.id)
             })
