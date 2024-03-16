@@ -110,8 +110,8 @@ export const useCategoryStore = defineStore("categoryStore", {
             try {
                 const {data: initializedLimit} = await (
                     existingLimit?.id == undefined
-                        ? create("category-limits", {...payload, user: user.value.id})
-                        : update("category-limits", existingLimit.id, {...payload})
+                        ? create<ICategoryLimit>("category-limits", {...payload, user: user.value.id})
+                        : update<ICategoryLimit>("category-limits", existingLimit.id, {...payload})
                 )
 
                 existingLimitIndex === -1
