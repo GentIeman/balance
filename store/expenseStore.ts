@@ -14,7 +14,7 @@ export const useExpenseStore = defineStore("expenseStore", {
     },
     actions: {
         async fetchUserExpenses(): Promise<void> {
-            this.expenses = []
+            this.$reset()
             const {findOne} = useStrapi()
             const user = useStrapiUser<IUser>()
 
