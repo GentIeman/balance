@@ -18,7 +18,8 @@ declare global {
     interface ICategoryLimit {
         id?: number,
         limit: number | null,
-        category: number
+        category: number,
+        user?: number
     }
 
     interface IExpense {
