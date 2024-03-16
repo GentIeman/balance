@@ -1,95 +1,97 @@
 <template>
-  <AppHeader
-    title="Expenses"
-    subtitle="It is worth recording your expenses so as not to spend in the future"
-  />
-  <UCard>
-    <template #header>
-      <div class="flex justify-between">
-        <h2 class="text-zinc-800 text-base font-semibold leading-tight">
-          Categories
-        </h2>
-        <UButton
-          icon="i-heroicons-plus"
-          size="sm"
-          @click="showCategoryForm({})"
-        >
-          New category
-        </UButton>
-      </div>
-    </template>
-    <AppTable
-      @show-edit-form="showCategoryForm"
-      @show-delete-form="showDeleteCategoryForm"
-      :payload="categories"
-      :page-count="5"
-      :columns="categoriesTableColumns"
-    />
-    <UModal
-      prevent-close
-      v-model="isShowCategoryForm"
-    >
-      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              {{ category.id ? "Edit" : "Create" }} category
-            </h3>
-            <UButton
-              color="gray"
-              variant="ghost"
-              icon="i-heroicons-x-mark-20-solid"
-              class="-my-1"
-              @click="isShowCategoryForm = false"
-            />
-          </div>
-        </template>
-        <CategoryForm
-          :category="category"
-          @close-modal="isShowCategoryForm = false"
-        />
-      </UCard>
-    </UModal>
-    <UModal
-      prevent-close
-      v-model="isShowDeleteCategoryForm"
-    >
-      <DeleteCategory
-        @close-modal="isShowDeleteCategoryForm = false"
-        :category="category"
-      />
-    </UModal>
-  </UCard>
-  <div class="grid grid-flow-col gap-10">
+  <UContainer class="grid gap-5 w-full">
     <UCard>
       <template #header>
-        <div class="flex justify-between">
+        <header class="flex justify-between">
           <h2 class="text-zinc-800 text-base font-semibold leading-tight">
-            Expenses
+            Categories
           </h2>
           <UButton
             icon="i-heroicons-plus"
             size="sm"
-            @click="showExpenseForm({})"
+            @click="showCategoryLimitForm({})"
           >
-            Add expense
+            Set limit
           </UButton>
-        </div>
+        </header>
       </template>
       <AppTable
-        @show-edit-form="showExpenseForm"
-        @show-delete-form="showDeleteExpenseForm"
-        :payload="expenses"
-        :page-count="3"
-        :columns="expensesTableColumns"
+        :rows="convertDatesInArray(categoryByExpense, 'createdAt', 'en-US', {day: 'numeric', month: 'long', year: 'numeric'})"
+        :page-count="5"
+        :columns="[
+          { key: 'title', label: 'Title', sortable: true },
+          { key: 'limit', label: 'Budget limit', sortable: true },
+          { key: 'createdAt', label: 'Date creation', sortable: true },
+          { key: 'actions' }
+        ]"
+        :actions="['clear limit']"
+        @drop-down-event="setLimit($event.data)"
       />
       <UModal
-        prevent-close
-        v-model="isShowExpenseForm"
+        v-model="isShowCategoryLimitForm"
+        @submit.capture="isShowCategoryLimitForm = false"
       >
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
           <template #header>
-            <div class="flex items-center justify-between">
+            <header class="flex items-center justify-between">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                Set limit
+              </h3>
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="isShowCategoryLimitForm = false"
+              />
+            </header>
+          </template>
+          <AppForm
+            @submit="setLimit($event)"
+            dir="category"
+            :state="category"
+            :select-options="categoryByExpense"
+            type="Set limit"
+          />
+        </UCard>
+      </UModal>
+    </UCard>
+    <UContainer class="grid grid-flow-col gap-5 lg:px-0 m-0">
+      <UCard>
+        <template #header>
+          <header class="flex justify-between">
+            <h2 class="text-zinc-800 text-base font-semibold leading-tight">
+              Expenses
+            </h2>
+            <UButton
+              icon="i-heroicons-plus"
+              size="sm"
+              @click="showExpenseForm({})"
+            >
+              Add expense
+            </UButton>
+          </header>
+        </template>
+        <AppTable
+          :rows="convertDatesInArray(mapExpensesToCategories, 'createdAt', 'en-US', {day: 'numeric', month: 'long', year: 'numeric'} )"
+          :page-count="3"
+          :columns="[
+            {key: 'amount', label: 'Amount', sortable: true},
+            {key: 'category', label: 'Category', sortable: true},
+            {key: 'createdAt', label: 'Date', sortable: true, type: 'date'},
+            {key: 'actions'}
+          ]"
+          :actions="['edit', 'delete']"
+          @drop-down-event="handleExpenseEvent($event)"
+        />
+      </UCard>
+      <UModal
+        v-model="isShowExpenseForm"
+        @submit.capture="isShowExpenseForm = false"
+      >
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+          <template #header>
+            <header class="flex items-center justify-between">
               <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
                 {{ expense.id ? "Edit" : "Create" }} expense
               </h3>
@@ -100,130 +102,155 @@
                 class="-my-1"
                 @click="isShowExpenseForm = false"
               />
-            </div>
+            </header>
           </template>
-          <expenseForm
-            :expense="expense"
-            @close-modal="isShowExpenseForm = false"
+          <AppForm
+            @submit="initExpense($event.data)"
+            dir="expense"
+            :state="expense"
+            :select-options="categoryList"
+            :type="expense.id ? 'Edit' : 'Create'"
           />
         </UCard>
       </UModal>
       <UModal
-        prevent-close
         v-model="isShowDeleteExpenseForm"
+        @submit.capture="isShowDeleteExpenseForm = false"
       >
-        <DeleteExpense
-          @close-modal="isShowDeleteExpenseForm = false"
-          :expense="expense"
-        />
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+          <template #header>
+            <div class="flex items-center justify-between">
+              <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+                Delete expense
+              </h3>
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-x-mark-20-solid"
+                class="-my-1"
+                @click="isShowDeleteExpenseForm = false"
+              />
+            </div>
+          </template>
+          <AppDeleteForm
+            item="expense"
+            @close="isShowDeleteExpenseForm = $event"
+            @submit="deleteExpense(expense)"
+          />
+        </UCard>
       </UModal>
-    </UCard>
+      <UCard
+        v-if="expensesCount > 0"
+        :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+      >
+        <template #header>
+          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+            Categories-wise Overview
+          </h3>
+        </template>
+        <UContainer class="grid place-items-center h-full w-full">
+          <PieChart
+            :data="categoryByExpense"
+            :config="pieChartConfig"
+            :options="{responsive: true, maintainAspectRatio: false}"
+          />
+        </UContainer>
+      </UCard>
+    </UContainer>
     <UCard
-      v-if="expenses.length > 0"
+      v-if="expensesCount > 0"
       :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
     >
-      <template #header>
-        <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          Categories-wise Overview
-        </h3>
-      </template>
-      <Pie
-        class="m-auto"
-        :data="categoriesChartData"
-        :options="chartOptions"
-      />
+      <UContainer class="h-full">
+        <TimeLineBarChart
+          locales="en-US"
+          :locale-date-options="{ day: 'numeric' }"
+          :data="expenses"
+          :options="{maintainAspectRatio: false, responsive: true}"
+          :config="timeLineBarConfig"
+        />
+      </UContainer>
     </UCard>
-  </div>
-  <UCard
-    v-if="expenses.length > 0"
-    :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
-  >
-    <Bar
-      :data="expensesChartData"
-      :options="chartOptions"
-    />
-  </UCard>
+  </UContainer>
 </template>
 
 <script setup lang="ts">
-import AppHeader from "~/components/AppHeader.vue"
-import {useBalanceStore} from "~/store/balanceStore"
-import {useAuthStore} from "~/store/authStore"
 import AppTable from "~/components/AppTable.vue"
-import {categoriesTableColumns, expensesTableColumns} from "~/utils/tableSchemes"
-import {UButton, UCard, UModal} from "#components"
-import CategoryForm from "~/components/forms/categoryForm.vue"
-import DeleteCategory from "~/components/forms/deleteCategory.vue"
-import expenseForm from "~/components/forms/expenseForm.vue"
-import DeleteExpense from "~/components/forms/deleteExpense.vue"
-import {Bar, Pie} from 'vue-chartjs'
-import {generateDaysBar, generatePieChart} from "~/utils/chartUtils"
+import AppForm from "~/components/AppForm.vue"
+import AppDeleteForm from "~/components/AppDeleteForm.vue"
+import {UButton, UCard, UContainer, UModal} from "#components"
+import {useExpenseStore} from "~/store/expenseStore"
+import PieChart from "~/components/charts/pieChart.vue"
+import TimeLineBarChart from "~/components/charts/timeLineBarChart.vue"
+import convertDatesInArray from "~/utils/convertDatesInArray"
+import {useCategoryStore} from "~/store/categoryStore"
 
-const balanceStore = useBalanceStore()
-const authStore = useAuthStore()
-const user = authStore.user
-const categories = computed(() => balanceStore.getReverseCategories)
-const expenses = computed(() => balanceStore.getCategoriesExpenses)
+const expenseStore = useExpenseStore()
+const {
+  fetchUserExpenses,
+  initExpense,
+  deleteExpense
+} = expenseStore
 
-const category = ref<object>({})
-const expense = ref<object>({})
+const {
+  expenses,
+  expensesCount,
+} = storeToRefs(expenseStore)
 
-const isShowCategoryForm = ref<boolean>(false)
-const isShowDeleteCategoryForm = ref<boolean>(false)
+const categoryStore = useCategoryStore()
+const {setLimit, fetchUserCategoryLimits} = categoryStore
+const {
+  categoryList,
+  categoryByExpense,
+  mapExpensesToCategories
+} = storeToRefs(categoryStore)
+
+const expense = ref<IExpense | object>({})
+const category = ref<ICategory | object>({})
+
+const isShowCategoryLimitForm = ref<boolean>(false)
 const isShowExpenseForm = ref<boolean>(false)
 const isShowDeleteExpenseForm = ref<boolean>(false)
-
-const showCategoryForm = (item: object) => {
-  category.value = item
-  isShowCategoryForm.value = true
-}
-
-const showDeleteCategoryForm = (item: object) => {
-  category.value = item
-  isShowDeleteCategoryForm.value = true
-}
 
 const showExpenseForm = (item: object) => {
   expense.value = item
   isShowExpenseForm.value = true
 }
 
-const showDeleteExpenseForm = (item: object) => {
-  expense.value = item
-  isShowDeleteExpenseForm.value = true
+const showCategoryLimitForm = (item: object) => {
+  category.value = item
+  isShowCategoryLimitForm.value = true
 }
 
-const expensesChartConfig = {
-  structure: {
-    date: "createdAt",
-    content: "amount"
-  },
+const handleExpenseEvent = (event: {data: object, type: string}) => {
+  expense.value = event.data
+  if (event.type == 'edit') {
+    isShowExpenseForm.value = true
+  } else {
+    isShowDeleteExpenseForm.value = true
+  }
+}
+
+const timeLineBarConfig: IBarChartConfig = {
+  structure: {dateKey: "createdAt", contentKey: "amount"},
   days: 7,
-  chartLabel: "Expenses for 7 days",
+  label: "Weekly expenses",
   backgroundColor: "cyan"
 }
 
-const categoriesChartConfig = {
+const pieChartConfig: IPieChartConfig = {
   label: "title",
   dataKey: "totalExpenses",
   colorKey: "color"
 }
 
-const totalExpenses = computed(() => balanceStore.getTotalCategoryExpenses())
-const expensesChartData = computed(() => generateDaysBar(expenses.value, expensesChartConfig))
-const categoriesChartData = computed(() => generatePieChart(totalExpenses.value, categoriesChartConfig))
-
-const chartOptions = ref({
-  responsive: true,
-  maintainAspectRatio: true,
+definePageMeta({
+  middleware: ["auth"]
 })
 
 onBeforeMount(async () => {
-  if (balanceStore.categories.length == 0) await balanceStore.fetchUserCategories(user.id)
-})
-
-definePageMeta({
-  middleware: ["auth"]
+  await fetchUserExpenses()
+  await fetchUserCategoryLimits()
 })
 
 useSeoMeta({
