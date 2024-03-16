@@ -7,7 +7,6 @@
 
 <script setup lang="ts">
 import {Pie} from "vue-chartjs"
-import type {IChart} from "~/utils/interfaces"
 
 const props = defineProps<{
   data: any[],
@@ -15,16 +14,9 @@ const props = defineProps<{
   config: IPieChartConfig,
 }>()
 
-
-interface IPieChartConfig {
-  label: string,
-  dataKey: string,
-  backgroundColor: string
-}
-
 const generatePieChart = (payload: { [key: string]: any }[], config: IPieChartConfig): IChart => {
   const labels = payload.map(item => item[config.label])
-  const backgroundColor = payload.map(item => item[config.backgroundColor])
+  const backgroundColor = payload.map(item => "#" + item[config.colorKey])
   const data = payload.map(item => item[config.dataKey])
   return {
     labels: labels,

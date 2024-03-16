@@ -1,14 +1,14 @@
 <template>
   <UContainer
     class="w-full"
-    v-if="getCategoriesCount == 0"
+    v-if="expensesCount == 0"
   >
     <UCard class="flex flex-col w-full justify-center">
       <template #header>
         <header class="flex">
           <h2 class=" flex flex-col text-zinc-800 text-[30px] font-semibold">
             Hello 👋
-            <span class="text-zinc-600 text-lg font-normal">You don't have any categories yet</span>
+            <span class="text-zinc-600 text-lg font-normal">You don't have any expenses yet</span>
           </h2>
         </header>
       </template>
@@ -16,18 +16,18 @@
         block
         @click="isShowCategoryForm = true"
       >
-        Create category
+        First expense
       </UButton>
     </UCard>
     <UModal
-      prevent-close
+      @submut.capture="isShowCategoryForm = false"
       v-model="isShowCategoryForm"
     >
       <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
         <template #header>
           <header class="flex items-center justify-between">
             <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Create category
+              First expense
             </h3>
             <UButton
               color="gray"
@@ -38,9 +38,12 @@
             />
           </header>
         </template>
-        <CategoryForm
-          @close-modal="isShowCategoryForm = false"
-          :category="{}"
+        <AppForm
+          @submit="initExpense($event.data)"
+          dir="expense"
+          :state="{}"
+          :select-options="categoryList"
+          type="Create"
         />
       </UCard>
     </UModal>
@@ -55,7 +58,7 @@
       </p>
     </UContainer>
     <UContainer class="grid grid-cols-3 gap-10 w-full sm:p-0 lg:p-0">
-      <UCard :class="{'col-span-2': getExpensesCount > 0, 'col-span-full': getExpensesCount == 0}">
+      <UCard :class="{'col-span-2': expensesCount > 0, 'col-span-full': expensesCount == 0}">
         <template #header>
           <header class="flex justify-between">
             <h2 class="text-zinc-800 text-base font-semibold leading-tight">
@@ -64,19 +67,18 @@
           </header>
         </template>
         <AppTable
-          :rows="getCategoryStatus"
+          :rows="convertDatesInArray(categoryByExpense, 'createdAt', 'en-US', {day: 'numeric', month: 'long', year: 'numeric'})"
           :page-count="5"
           :columns="[
             {key: 'title', label: 'Title', sortable: true},
-            {key: 'budgetLimit', label: 'Limit', sortable: true},
+            {key: 'limit', label: 'Budget limit', sortable: true},
             {key: 'status', label: 'Status', sortable: true}
-          ]" 
+          ]"
         />
       </UCard>
       <UCard
-        v-if="getExpensesCount > 0"
+        v-if="expensesCount > 0"
         class="col-span-1"
-        :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >
         <template #header>
           <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -85,18 +87,46 @@
         </template>
         <UContainer class="grid place-items-center h-full w-full">
           <PieChart
-            :data="getTotalExpensesByCategory()"
-            :config="PieChartConfig"
+            :data="categoryByExpense"
+            :config="pieChartConfig"
             :options="{maintainAspectRatio: false}"
           />
         </UContainer>
       </UCard>
     </UContainer>
-    <UContainer class="grid gap-10 w-full sm:p-0 lg:p-0">
+    <UContainer class="grid grid-cols-3 auto-rows-max gap-10 w-full sm:p-0 lg:p-0">
       <UCard
-        v-if="getExpensesCount > 0"
+        class="col-span-1 max-h-[450px]"
+      >
+        <template #header>
+          <header class="flex items-center justify-between">
+            <h3 class="text-zinc-800 text-lg font-semibold">
+              Top 3 savings
+            </h3>
+          </header>
+        </template>
+        <ul class="flex flex-col gap-10">
+          <li
+            class="w-full"
+            v-for="saving in topThreeSavings"
+            :key="saving.id"
+          >
+            <p class="text-cyan-950 text-lg font-semibold">
+              {{ saving.title }}
+            </p>
+            <UProgress
+              indicator
+              :value="calcProgress(saving.currentAmount, saving.totalAmount)"
+            />
+            <p class="text-black text-opacity-80 text-xs font-normal">
+              {{ saving.currentAmount ?? 0 }} / {{ saving.totalAmount }}
+            </p>
+          </li>
+        </ul>
+      </UCard>
+      <UCard
+        v-if="expensesCount > 0"
         class="grid col-span-2 bg-white"
-        :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
       >
         <UContainer class="h-full">
           <TimeLineBarChart
@@ -104,7 +134,6 @@
             :locale-date-options="{ year: 'numeric', month: 'long' }"
             :data="expenses"
             :options="{maintainAspectRatio: false, responsive: true}"
-            interval="month"
             :config="timeLineBarConfig"
           />
         </UContainer>
@@ -114,36 +143,42 @@
 </template>
 
 <script setup lang="ts">
-import {UButton, UCard, UContainer, UModal} from "#components"
-import CategoryForm from "~/components/forms/categoryForm.vue"
+import {UButton, UCard, UContainer, UModal, UProgress} from "#components"
+import AppForm from "~/components/AppForm.vue"
 import AppTable from "~/components/AppTable.vue"
 import {useExpenseStore} from "~/store/expenseStore"
 import TimeLineBarChart from "~/components/charts/timeLineBarChart.vue"
 import PieChart from "~/components/charts/pieChart.vue"
-import type {IBarChartConfig} from "~/utils/interfaces"
 import {useCategoryStore} from "~/store/categoryStore"
+import convertDatesInArray from "~/utils/convertDatesInArray"
+import {useSavingStore} from "~/store/savingStore"
+import calcProgress from "~/utils/calcProgress"
 
 const expenseStore = useExpenseStore()
 const {
   expenses,
-  getExpensesCount
+  expensesCount,
 } = storeToRefs(expenseStore)
-const {fetchUserExpenses} = expenseStore
-
+const {fetchUserExpenses, initExpense} = expenseStore
 
 const categoryStore = useCategoryStore()
 const {
-  getTotalExpensesByCategory,
-  getCategoryStatus,
-  getCategoriesCount
+  categoryList,
+  categoryByExpense
 } = storeToRefs(categoryStore)
+const {fetchUserCategoryLimits} = categoryStore
 
 const isShowCategoryForm = ref<boolean>(false)
 
-const PieChartConfig = {
+const savingStore = useSavingStore()
+const {sortedSavingsByPercent} = storeToRefs(savingStore)
+const {fetchUserSavings} = savingStore
+const topThreeSavings = computed(() => sortedSavingsByPercent.value.slice(0, 3))
+
+const pieChartConfig: IPieChartConfig = {
   label: "title",
   dataKey: "totalExpenses",
-  backgroundColor: "color"
+  colorKey: "color"
 }
 
 const timeLineBarConfig: IBarChartConfig = {
@@ -153,7 +188,7 @@ const timeLineBarConfig: IBarChartConfig = {
   backgroundColor: "cyan"
 }
 
-definePageMeta({ middleware: ["auth"] })
+definePageMeta({middleware: ["auth"]})
 
 useSeoMeta({
   title: "Dashboard",
@@ -162,6 +197,8 @@ useSeoMeta({
 
 onBeforeMount(async () => {
   await fetchUserExpenses()
+  await fetchUserCategoryLimits()
+  await fetchUserSavings()
 })
 
 </script>

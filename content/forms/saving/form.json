@@ -1,0 +1,90 @@
+{
+  "schema": {
+    "input": [
+      {
+        "type": "text",
+        "placeholder": "Dream house",
+        "disable": false,
+        "name": "title",
+        "label": "Title",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "name": "totalAmount",
+        "label": "Amount",
+        "required": true
+      },
+      {
+        "type": "number",
+        "placeholder": "1000",
+        "disable": false,
+        "require": false,
+        "name": "currentAmount",
+        "required": true,
+        "label": "Current amount"
+      },
+      {
+        "type": "date",
+        "placeholder": "mm/dd/yyyy",
+        "disable": false,
+        "require": true,
+        "name": "endDate",
+        "required": true,
+        "label": "End date"
+      }
+    ],
+    "button": [
+      {
+        "type": "submit"
+      }
+    ]
+  },
+  "rules": {
+    "title": "Saving",
+    "description": "Create/update saving",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "required": true
+      },
+      "totalAmount": {
+        "type": "number",
+        "moreThan": 9,
+        "required": true
+      },
+      "endDate": {
+        "type": "date",
+        "required": true
+      },
+      "currentAmount": {
+        "type": "number",
+        "moreThan": 9,
+        "lessThan": 1000000,
+        "required": false
+      }
+    }
+  },
+  "config": {
+    "errMessages": {
+      "title": {
+        "required": "Required"
+      },
+      "totalAmount": {
+        "required": "Required",
+        "moreThan": "Minimum 10"
+      },
+      "currentTotal": {
+        "moreThan": "Minimum 10",
+        "lessThan": "Maximum 999999"
+      },
+      "endDate": {
+        "required": "Required",
+        "typeError": "Invalid date"
+      }
+    }
+  }
+}

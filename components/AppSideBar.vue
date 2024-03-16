@@ -12,14 +12,6 @@
       {{ user?.username }}
       <span class="text-black text-opacity-50 text-sm font-normal">{{ user?.email }}</span>
     </UButton>
-    <UButton
-      block
-      class="w-full"
-      @click="isShowExpenseForm = true"
-      v-if="getCategoriesCount > 0"
-    >
-      Add expense
-    </UButton>
     <div
       class="flex flex-col w-full gap-3"
     >
@@ -61,45 +53,14 @@
     >
       Log out
     </UButton>
-    <UModal
-      prevent-close
-      v-model="isShowExpenseForm"
-    >
-      <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-        <template #header>
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Create expense
-            </h3>
-            <UButton
-              color="gray"
-              variant="ghost"
-              icon="i-heroicons-x-mark-20-solid"
-              class="-my-1"
-              @click="isShowExpenseForm = false"
-            />
-          </div>
-        </template>
-        <expenseForm
-          :expense="{}"
-          @close-modal="isShowExpenseForm = false"
-        />
-      </UCard>
-    </UModal>
   </aside>
 </template>
 
 <script setup lang="ts">
-import {AppLogo as Logo, UButton, ULink, UModal, UCard} from "#components"
-import expenseForm from "~/components/forms/expenseForm.vue"
-import {useCategoryStore} from "~/store/categoryStore"
-import type {IUser} from "~/utils/interfaces"
+import {AppLogo as Logo, UButton, ULink} from "#components"
 
-const categoryStore = useCategoryStore()
 const user = useStrapiUser<IUser>()
-const {getCategoriesCount} = storeToRefs(categoryStore)
 const router = useRouter()
-const isShowExpenseForm = ref<boolean>(false)
 
 const links = [
   {to: "/", name: "Dashboard"},
